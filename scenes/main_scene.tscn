@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://bx5eqv52gmsw0"]
 
-[ext_resource type="Texture2D" uid="uid://cudm5ug6nswl7" path="res://scenes/GRASS+.png" id="1_w2twt"]
-[ext_resource type="Texture2D" uid="uid://cj8hdfofgs0h0" path="res://scenes/Water+.png" id="2_pw63i"]
+[ext_resource type="Texture2D" uid="uid://cl67y7db48de7" path="res://scenes/Assets/GRASS+.png" id="1_w2twt"]
+[ext_resource type="Texture2D" uid="uid://c7friu0wj3rr0" path="res://scenes/Assets/Water+.png" id="2_pw63i"]
 [ext_resource type="Script" uid="uid://dbuvp3h7li3hc" path="res://scenes/terrain.gd" id="3_7ykc4"]
 [ext_resource type="Script" uid="uid://hp2nvh2xk0al" path="res://scenes/camera_2d.gd" id="4_pu3yx"]
 [ext_resource type="Script" uid="uid://kkd12ivnrpfn" path="res://scenes/building_menu.gd" id="5_gubc5"]
