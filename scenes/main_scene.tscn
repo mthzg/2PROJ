@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://bx5eqv52gmsw0"]
+[gd_scene load_steps=9 format=3 uid="uid://bx5eqv52gmsw0"]
 
 [ext_resource type="Texture2D" uid="uid://cl67y7db48de7" path="res://scenes/Assets/GRASS+.png" id="1_w2twt"]
 [ext_resource type="Texture2D" uid="uid://c7friu0wj3rr0" path="res://scenes/Assets/Water+.png" id="2_pw63i"]
 [ext_resource type="Script" uid="uid://dbuvp3h7li3hc" path="res://scenes/terrain.gd" id="3_7ykc4"]
 [ext_resource type="Script" uid="uid://hp2nvh2xk0al" path="res://scenes/camera_2d.gd" id="4_pu3yx"]
+[ext_resource type="Script" uid="uid://kkd12ivnrpfn" path="res://scenes/building_menu.gd" id="5_gubc5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pw63i"]
 resource_name = "Grass"
@@ -617,3 +618,23 @@ tile_set = SubResource("TileSet_7ykc4")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("4_pu3yx")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="BuildingMenu" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_gubc5")
+
+[node name="Panel" type="Panel" parent="CanvasLayer/BuildingMenu"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BuildingGrid" type="GridContainer" parent="CanvasLayer/BuildingMenu/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 4
