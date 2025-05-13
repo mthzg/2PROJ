@@ -2,8 +2,8 @@ extends Camera2D
 
 var dragging := false
 var zoom_speed := 0.1
-var min_zoom := 2.0
-var max_zoom := 6.0
+var min_zoom := 0.8
+var max_zoom := 10.0
 
 func _ready():
 	# Set initial zoom on startup
