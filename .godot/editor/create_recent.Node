@@ -1,1 +1,8 @@
 TileMapLayer
+Node2D
+Node
+TextureRect
+PanelContainer
+HBoxContainer
+Control
+CanvasLayer
