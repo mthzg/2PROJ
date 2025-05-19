@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://deqsdqeb6bvq0"]
+
+[ext_resource type="Texture2D" uid="uid://dlho0eesflef0" path="res://Assets/greatfire.png" id="1_mcwj4"]
+
+[node name="GreatFire" type="Sprite2D"]
+texture = ExtResource("1_mcwj4")

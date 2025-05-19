@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dp10ongfewuke"]
+
+[ext_resource type="Texture2D" uid="uid://c7b0ww0vec5xm" path="res://Assets/house.png" id="1_axm3h"]
+
+[node name="Sprite2D" type="Sprite2D"]
+texture = ExtResource("1_axm3h")
+offset = Vector2(7, 7)
+flip_h = true

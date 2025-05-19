@@ -1,0 +1,69 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgb5pygmvr8rw"]
+
+[ext_resource type="Texture2D" uid="uid://c7b0ww0vec5xm" path="res://Assets/house.png" id="1_5ysmq"]
+[ext_resource type="Script" uid="uid://cc1x03js0cjfh" path="res://scenes/hud_control.gd" id="1_6fi6k"]
+[ext_resource type="Texture2D" uid="uid://bxcdaxp734d08" path="res://Assets/tree.png" id="2_5ysmq"]
+[ext_resource type="Texture2D" uid="uid://dlho0eesflef0" path="res://Assets/greatfire.png" id="3_6fi6k"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_6fi6k")
+
+[node name="ItemList" type="ItemList" parent="Control"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 192.0
+offset_top = 480.0
+offset_right = 920.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/ItemList"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.0520833
+anchor_bottom = 0.3125
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 9.0
+offset_bottom = 7.0
+
+[node name="Small_House" type="Sprite2D" parent="Control/ItemList/RichTextLabel"]
+position = Vector2(19, 16)
+scale = Vector2(1.14, 1.1)
+texture = ExtResource("1_5ysmq")
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Control/ItemList"]
+visible = false
+layout_mode = 0
+offset_left = 56.0
+offset_top = 8.0
+offset_right = 91.0
+offset_bottom = 48.0
+
+[node name="Tree" type="Sprite2D" parent="Control/ItemList/RichTextLabel2"]
+position = Vector2(18, 19)
+texture = ExtResource("2_5ysmq")
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Control/ItemList"]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_top = 7.0
+offset_right = 129.0
+offset_bottom = 45.0
+
+[node name="Greatfire" type="Sprite2D" parent="Control/ItemList/RichTextLabel3"]
+position = Vector2(16, 20)
+scale = Vector2(0.35, 0.399999)
+texture = ExtResource("3_6fi6k")
