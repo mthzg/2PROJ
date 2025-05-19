@@ -3,4 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dlho0eesflef0" path="res://Assets/greatfire.png" id="1_mcwj4"]
 
 [node name="GreatFire" type="Sprite2D"]
+position = Vector2(4.76837e-07, -6.77626e-21)
+scale = Vector2(0.471429, 0.5)
 texture = ExtResource("1_mcwj4")
+offset = Vector2(16, 7)

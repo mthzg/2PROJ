@@ -10,34 +10,26 @@ var occupied_cells := {}
 var ghost_cell = Vector2i.ZERO
 var is_ghost_active = false
 
-# Dictionary mapping building IDs to their PackedScenes
-var buildings = {
-	1: preload("res://scenes/Buildings/Small_House.tscn"),
-	2: preload("res://scenes/Buildings/Tree.tscn"),
-	3: preload("res://scenes/Buildings/GreatFire.tscn")
-}
-
-# Current building ID to place; default to 1 (Small House)
-var current_building_id = null
-
-
+var current_building_data = null
 
 func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		if is_ghost_active:
+			print("cancel placement")
+			is_ghost_active = false
+			ghost_cell = null
+			current_building_data = null
+			self.queue_redraw()
+			
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if is_ghost_active and ghost_cell != null:
-			if try_place_building_2x2(ghost_cell, current_building_id):
+			if try_place_building(ghost_cell):
 				is_ghost_active = false
 				ghost_cell = null
-				current_building_id = null
+				current_building_data = null
 			self.queue_redraw()
-		else:
-			if not current_building_id:
-				print("Error: no building id set")
-				return
-			is_ghost_active = true
-			var mouse_pos = get_global_mouse_position()
-			ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
-			self.queue_redraw()
+			
+
 
 func _process(_delta):
 	if is_ghost_active:
@@ -46,18 +38,23 @@ func _process(_delta):
 		self.queue_redraw()
 
 func _draw():
-	if is_ghost_active and ghost_cell != null:
-		for x in range(2):
-			for y in range(2):
+	if is_ghost_active and ghost_cell != null and current_building_data != null:
+		var size = current_building_data.get("size", Vector2i(1, 1))  # Default 1x1
+		for x in range(size.x):
+			for y in range(size.y):
 				var offset = Vector2(x, y) * tile_size
 				var pos = (Vector2(ghost_cell.x, ghost_cell.y) * tile_size) + offset
 				draw_rect(Rect2(pos, tile_size), Color(0.2, 0.4, 1.0, 0.3), true)
 
 # Try place building with ID parameter, returns true if placement succeeded
-func try_place_building_2x2(cell: Vector2i, building_id: int) -> bool:
-	# Check tiles for placement
-	for x in range(2):
-		for y in range(2):
+func try_place_building(cell: Vector2i):
+	if current_building_data == null:
+		return
+
+	var size = current_building_data.get("size", Vector2i(1, 1))
+
+	for x in range(size.x):
+		for y in range(size.y):
 			var check_cell = cell + Vector2i(x, y)
 
 			var ground_tile = ground_layer.get_cell_source_id(check_cell)
@@ -65,38 +62,39 @@ func try_place_building_2x2(cell: Vector2i, building_id: int) -> bool:
 			var water_tile = water_layer.get_cell_source_id(check_cell)
 
 			if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
-				print("Cannot place building here; blocked at cell ", check_cell)
-				return false
+				print("Cannot place; blocked at cell ", check_cell)
+				return
 
 			if check_cell in occupied_cells:
-				print("Cannot place building here; already occupied at cell ", check_cell)
-				return false
+				print("Cannot place; occupied at cell ", check_cell)
+				return
 
-	print("Placing building ID ", building_id, " at cell ", cell)
-	place_building(cell, building_id)
-	return true
+	print("✅ Placing building at ", cell)
+	place_building(cell, size)
 
 # Place building by ID, mark cells occupied
-func place_building(cell: Vector2i, building_id: int) -> void:
-	if not buildings.has(building_id):
-		print("Error: Unknown building ID ", building_id)
+func place_building(cell: Vector2i, size: Vector2i):
+	var scene = current_building_data.get("scene")
+	if scene == null:
 		return
 
-	var building_scene = buildings[building_id]
-	var building_instance = building_scene.instantiate()
-
+	var instance = scene.instantiate()
 	var local_pos = ground_layer.map_to_local(cell)
-	building_instance.global_position = ground_layer.to_global(local_pos)
-	add_child(building_instance)
+	instance.global_position = ground_layer.to_global(local_pos)
+	add_child(instance)
 
-	for x in range(2):
-		for y in range(2):
+	for x in range(size.x):
+		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
 			occupied_cells[occupied_cell] = true
+			
+	#place building in a row once one is selected		
+	#current_building_data = null
+
 
 # Optionally: add a method to change current building selection
-func set_current_building(building_id: int) -> void:
-	if buildings.has(building_id):
-		current_building_id = building_id
-	else:
-		print("Building ID ", building_id, " not found")
+func set_current_building(building_data) -> void:
+	current_building_data = building_data
+	is_ghost_active = true
+	var mouse_pos = get_global_mouse_position()
+	ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))

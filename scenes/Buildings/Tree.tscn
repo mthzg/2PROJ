@@ -4,3 +4,4 @@
 
 [node name="Tree" type="Sprite2D"]
 texture = ExtResource("1_xjjly")
+offset = Vector2(0, -7)

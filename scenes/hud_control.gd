@@ -1,35 +1,27 @@
 extends Control
 
 @onready var item_list: ItemList = $ItemList
-@onready var terrain_node: Node = get_node("/root/Main/TileMap")
+@onready var terrain_node: Node = get_node("../../Terrain")  # ✅ Updated to use the correct node name
 
+var building_id = null
 # Building ID to name/scene
 var building_data = {
-	1: {"name": "Small House", "scene": preload("res://scenes/Buildings/Small_House.tscn")},
-	2: {"name": "Tree", "scene": preload("res://scenes/Buildings/Tree.tscn")},
-	3: {"name": "Greatfire", "scene": preload("res://scenes/Buildings/GreatFire.tscn")}
+	1: {"name": "Small House", "scene": preload("res://scenes/Buildings/Small_House.tscn"), "png":"res://Assets/house.png", "size": Vector2i(2,2)},
+	2: {"name": "Tree", "scene": preload("res://scenes/Buildings/Tree.tscn"), "png":"res://Assets/tree.png", "size": Vector2i(1,1)},
+	3: {"name": "Greatfire", "scene": preload("res://scenes/Buildings/GreatFire.tscn"), "png":"res://Assets/greatfire.png", "size": Vector2i(2,2)}
 }
 
-# Reference to the tilemap to set the building
-var tilemap_script: Node = null
-
 func _ready():
-	# Populate the item list with building names and icons if needed
 	for id in building_data.keys():
-		var name = building_data[id]["name"]
-		var idx = item_list.add_item(name)
-		item_list.set_item_metadata(idx, id)  # Store building ID with each item
+		var data = building_data[id]
+		var texture = load(data["png"])  # Load the PNG as a Texture2D
+		var idx = item_list.add_icon_item(texture)  # Use icon only
+		item_list.set_item_metadata(idx, id)  # Attach ID to each item
 
-	# Connect the signal
-	item_list.connect("item_selected", Callable(self, "_on_item_selected"))
-
-	# Optionally: find the tilemap script if it's in the scene
-	tilemap_script = get_node("/root/Main/TileMap")  # Adjust path as needed
+	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
 
 
 func _on_item_selected(index: int):
 	var building_id = item_list.get_item_metadata(index)
-	print("Selected building ID:", building_id)
-
-	if tilemap_script and tilemap_script.has_method("set_current_building"):
-		tilemap_script.call("set_current_building", building_id)
+	var data = building_data[building_id]
+	terrain_node.set_current_building(data)
