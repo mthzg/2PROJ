@@ -1,8 +1,11 @@
 extends TileMap
 
+
+
 @onready var ground_layer := get_node("Ground")
 @onready var rocks_layer := get_node("Rocks")
 @onready var water_layer := get_node("Water")
+var citizen_scene := preload("res://scenes/Citizen.tscn")
 
 var tile_size: Vector2 = Vector2(16, 16)
 var occupied_cells := {}
@@ -11,6 +14,7 @@ var ghost_cell = Vector2i.ZERO
 var is_ghost_active = false
 
 var current_building_data = null
+var max_citizens = null
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
@@ -75,6 +79,7 @@ func try_place_building(cell: Vector2i):
 # Place building by ID, mark cells occupied
 func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
+	var occupancy = current_building_data.get("occupancy")
 	if scene == null:
 		return
 
@@ -87,7 +92,28 @@ func place_building(cell: Vector2i, size: Vector2i):
 		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
 			occupied_cells[occupied_cell] = true
+				# Spawn citizens if occupancy > 0
+	if occupancy:
+		for i in range(occupancy):
+			var citizen = citizen_scene.instantiate()
 			
+			# Random spawn point around the house
+			var offset = Vector2(
+				randf_range(0, size.x * tile_size.x),
+				randf_range(0, size.y * tile_size.y)
+			)
+			var spawn_position = ground_layer.to_global(ground_layer.map_to_local(cell)) + offset
+	
+			citizen.global_position = spawn_position
+			
+			citizen.terrain_tilemap = self  # ✅ Set the reference before adding
+			
+			citizen.ground_layer = ground_layer
+			citizen.rocks_layer = rocks_layer
+			citizen.water_layer = water_layer
+
+			print(self)
+			add_child(citizen)
 	#place building in a row once one is selected		
 	#current_building_data = null
 
