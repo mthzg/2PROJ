@@ -8,7 +8,9 @@ var building_id = null
 var building_data = {
 	1: {"name": "Small House", "scene": preload("res://scenes/Buildings/Small_House.tscn"), "png":"res://Assets/house.png", "size": Vector2i(2,2), "occupancy": 2},
 	2: {"name": "Tree", "scene": preload("res://scenes/Buildings/Tree.tscn"), "png":"res://Assets/tree.png", "size": Vector2i(1,1)},
-	3: {"name": "Greatfire", "scene": preload("res://scenes/Buildings/GreatFire.tscn"), "png":"res://Assets/greatfire.png", "size": Vector2i(2,2)}
+	3: {"name": "Greatfire", "scene": preload("res://scenes/Buildings/GreatFire.tscn"), "png":"res://Assets/greatfire.png", "size": Vector2i(2,2)},
+	4: {"name": "Dirt road", "scene": preload("res://scenes/Buildings/dirt_road.tscn"), "png":"res://Assets/dirt_road.png", "size": Vector2i(1,1)}
+	
 }
 
 func _ready():

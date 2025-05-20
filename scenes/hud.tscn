@@ -24,7 +24,7 @@ offset_right = 920.0
 offset_bottom = 608.0
 grow_horizontal = 2
 grow_vertical = 0
-max_columns = 3
+max_columns = 7
 same_column_width = true
 icon_mode = 0
 

@@ -5,10 +5,13 @@ extends TileMap
 @onready var ground_layer := get_node("Ground")
 @onready var rocks_layer := get_node("Rocks")
 @onready var water_layer := get_node("Water")
-var citizen_scene := preload("res://scenes/Citizen.tscn")
+var citizen_scene := preload("res://scenes/Buildings/Citizen.tscn")
 
 var tile_size: Vector2 = Vector2(16, 16)
-var occupied_cells := {}
+var occupied_cells = {}
+var road_positions: = {}
+var work_spot_cells = {}
+var citizen_house_position: Vector2i
 
 var ghost_cell = Vector2i.ZERO
 var is_ghost_active = false
@@ -91,29 +94,46 @@ func place_building(cell: Vector2i, size: Vector2i):
 	for x in range(size.x):
 		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
-			occupied_cells[occupied_cell] = true
-				# Spawn citizens if occupancy > 0
+			occupied_cells[occupied_cell] = current_building_data.get("name")
+
+			
+			if current_building_data.get("name") == "Dirt road":
+				road_positions[occupied_cell] = "Dirt road"
+			
+			if current_building_data.get("name") == "Tree":
+				work_spot_cells[occupied_cell] = "wood"
+
+			
+					
+	
 	if occupancy:
 		for i in range(occupancy):
 			var citizen = citizen_scene.instantiate()
-			
-			# Random spawn point around the house
+
+			# Random spawn offset within the building footprint
 			var offset = Vector2(
 				randf_range(0, size.x * tile_size.x),
 				randf_range(0, size.y * tile_size.y)
 			)
 			var spawn_position = ground_layer.to_global(ground_layer.map_to_local(cell)) + offset
-	
 			citizen.global_position = spawn_position
-			
-			citizen.terrain_tilemap = self  # ✅ Set the reference before adding
-			
+
+			# Assign tilemaps and layers
+			citizen.terrain_tilemap = self
 			citizen.ground_layer = ground_layer
 			citizen.rocks_layer = rocks_layer
 			citizen.water_layer = water_layer
 
-			print(self)
+			citizen.road_positions = road_positions
+			citizen.occupied_cells = occupied_cells
+			citizen.work_spot_cells = work_spot_cells
+			
+			citizen.citizen_house_position = cell
+			
+
 			add_child(citizen)
+			citizen.go_gather("wood")
+
 	#place building in a row once one is selected		
 	#current_building_data = null
 
