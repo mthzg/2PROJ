@@ -13,7 +13,11 @@ config_version=5
 config/name="2PROJ_test"
 run/main_scene="uid://dkoi5kcugjimn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://caiay1r7dy835"
+
+[autoload]
+
+GameClock="*res://GameClock.gd"
 
 [rendering]
 

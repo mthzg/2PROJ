@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dy5rj7wxs08n1"
-path="res://.godot/imported/greatfire.png-2bde8884850409a6adacfb0f898d5760.ctex"
+uid="uid://cb0luki3dwcia"
+path="res://.godot/imported/Fast.png-6ea61b3ef67bdc704a196837e45458cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/greatfire.png"
-dest_files=["res://.godot/imported/greatfire.png-2bde8884850409a6adacfb0f898d5760.ctex"]
+source_file="res://Assets/Fast.png"
+dest_files=["res://.godot/imported/Fast.png-6ea61b3ef67bdc704a196837e45458cc.ctex"]
 
 [params]
 

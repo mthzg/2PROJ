@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://doamg0xq3top1"]
+
+[ext_resource type="Texture2D" uid="uid://byctgx2064hwg" path="res://Assets/Pause.png" id="1_5iqf6"]
+[ext_resource type="Script" uid="uid://bakry202jjcv4" path="res://scenes/time_control.gd" id="1_7vv4g"]
+[ext_resource type="Texture2D" uid="uid://cj5mvr40lbht5" path="res://Assets/Play.png" id="2_7vv4g"]
+[ext_resource type="Texture2D" uid="uid://cb0luki3dwcia" path="res://Assets/Fast.png" id="3_3tfsx"]
+[ext_resource type="Texture2D" uid="uid://ddiyl2rvol8a0" path="res://Assets/SuperFast.png" id="4_1cdht"]
+
+[node name="TimeControl" type="HBoxContainer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -204.0
+offset_bottom = 39.0
+grow_horizontal = 0
+script = ExtResource("1_7vv4g")
+
+[node name="Pause" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+icon = ExtResource("1_5iqf6")
+
+[node name="Play" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+icon = ExtResource("2_7vv4g")
+
+[node name="Fast" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+icon = ExtResource("3_3tfsx")
+
+[node name="SuperFast" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+icon = ExtResource("4_1cdht")
