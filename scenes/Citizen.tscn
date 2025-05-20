@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bnshl7oedrck"]
+
+[ext_resource type="Script" uid="uid://dd1o6sy5msowo" path="res://scenes/citizen.gd" id="1_mrxaa"]
+[ext_resource type="Texture2D" uid="uid://bbf1rxl4dldf" path="res://Assets/citizen.png" id="2_n4hrw"]
+
+[node name="Citizen" type="CharacterBody2D"]
+script = ExtResource("1_mrxaa")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="citizen_png" type="Sprite2D" parent="."]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_n4hrw")
