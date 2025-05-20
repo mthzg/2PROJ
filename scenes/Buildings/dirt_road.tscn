@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcrsngkdm7bpa"]
+
+[ext_resource type="Texture2D" uid="uid://d2n54ls0apb1r" path="res://Assets/dirt_road.png" id="1_nwvxd"]
+
+[node name="DirtRoad" type="Sprite2D"]
+show_behind_parent = true
+scale = Vector2(0.7825, 0.965)
+texture = ExtResource("1_nwvxd")
