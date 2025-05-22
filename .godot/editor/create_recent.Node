@@ -1,4 +1,8 @@
+Button
+VBoxContainer
+RichTextLabel
+HBoxContainer
+ColorRect
+CanvasLayer
 Label
 Panel
-Button
-HBoxContainer
