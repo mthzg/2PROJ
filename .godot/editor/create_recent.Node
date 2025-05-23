@@ -1,7 +1,7 @@
-ColorRect
-Button
-VBoxContainer
 RichTextLabel
+VBoxContainer
+Button
+ColorRect
 HBoxContainer
 CanvasLayer
 Label

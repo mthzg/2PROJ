@@ -1,4 +1,4 @@
 extends Node
 
-const GameScene = "res://Scenes/GameScene.tscn"
-const MenuScene = "res://Scenes/MainMenu.tscn"
+const MainScene = "res://scenes/main_scene.tscn"
+const Menus = "res://scenes/menus.tscn"
