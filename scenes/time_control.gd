@@ -1,5 +1,10 @@
 extends HBoxContainer
 
+@onready var clock = get_node("../Clock")
+
+func _ready(): 
+	print("clock node = ", clock)
+
 func _update_buttons(active_button: Button):
 	for child in get_children():
 		child.modulate = Color.WHITE
@@ -7,19 +12,19 @@ func _update_buttons(active_button: Button):
 	active_button.release_focus()
 
 func _on_pause_pressed():
-	GameClock.pause()
+	clock.pause()
 	_update_buttons($Pause)
 
 func _on_play_pressed():
-	GameClock.play()
+	clock.play()
 	_update_buttons($Play)
 
 func _on_fast_pressed():
-	GameClock.fast()
+	clock.fast()
 	_update_buttons($Fast)
 
 func _on_super_fast_pressed():
-	GameClock.super_fast()
+	clock.super_fast()
 	_update_buttons($SuperFast)
 
 func _input(event):

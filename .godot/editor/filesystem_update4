@@ -1,8 +1,11 @@
+res://scenes/time_control.tscn
 res://scenes/Citizen.tscn
 res://scenes/hud.tscn
-res://scenes/time_control.tscn
 res://scenes/clock.tscn
 res://scenes/main_scene.tscn
 res://scenes/Buildings/Citizen.tscn
 res://scenes/main_menu.tscn
+res://scenes/main_scene.gd
 res://scenes/clock.gd
+res://scenes/time_control.gd
+res://GameClock.gd

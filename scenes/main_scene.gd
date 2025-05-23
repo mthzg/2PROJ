@@ -24,6 +24,7 @@ func _ready():
 
 func _on_time_updated(current_time: String) -> void:
 	minute_counter += 1
+	print("received update time")
 
 	# Manage citizens time_to_live:
 	for i in range(citizens.size() - 1, -1, -1):
