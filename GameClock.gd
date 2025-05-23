@@ -59,16 +59,20 @@ func set_speed(new_speed: Speed):
 		Speed.PAUSE:
 			timer.stop()
 		Speed.PLAY:
+			timer.stop()
 			timer.wait_time = 1.0
 			timer.start()
 		Speed.FAST:
+			timer.stop()
 			timer.wait_time = 0.3
 			timer.start()
 		Speed.SUPER_FAST:
+			timer.stop()
 			timer.wait_time = 0.1
 			timer.start()
+
 
 func pause(): set_speed(Speed.PAUSE)
 func play(): set_speed(Speed.PLAY)
 func fast(): set_speed(Speed.FAST)
-func ultra_fast(): set_speed(Speed.SUPER_FAST)
+func super_fast(): set_speed(Speed.SUPER_FAST)

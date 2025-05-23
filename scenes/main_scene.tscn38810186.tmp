@@ -637,3 +637,4 @@ tile_map_data = PackedByteArray("AAD4/wQAAQAEAAAAAAD5/wQAAQAEAAAAAAD5/wUAAQACAAA
 tile_set = SubResource("TileSet_7ykc4")
 
 [node name="MainMenu" parent="." instance=ExtResource("9_c1pb6")]
+visible = false

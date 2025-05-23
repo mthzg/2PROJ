@@ -34,3 +34,8 @@ icon = ExtResource("3_3tfsx")
 layout_mode = 2
 size_flags_horizontal = 4
 icon = ExtResource("4_1cdht")
+
+[connection signal="pressed" from="Pause" to="." method="_on_pause_pressed"]
+[connection signal="pressed" from="Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Fast" to="." method="_on_fast_pressed"]
+[connection signal="pressed" from="SuperFast" to="." method="_on_super_fast_pressed"]

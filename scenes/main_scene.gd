@@ -9,6 +9,8 @@ var minute_counter := 0
 var total_citizens: int = 0
 var max_citizens: int = 15  # Initial max citizens
 var citizens := []
+var wood: int
+
 
 func _ready():
 	for i in range(10):
