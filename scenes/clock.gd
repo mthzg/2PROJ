@@ -1,4 +1,5 @@
 extends Panel
+@onready var citizen = get_node("../../../Citizen")
 
 signal time_updated(current_time: String)
 
@@ -16,6 +17,7 @@ const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Se
 var timer := Timer.new()
 
 func _ready():
+	print ("clock citizen node = ",citizen)
 	#GameClock.time_updated.connect(_update_ui)
 	#_update_ui(GameClock.get_time_string())
 	# Setup timer
@@ -63,20 +65,34 @@ func _update_ui(time_str: String):
 	$Label.text = time_str
 
 func set_speed(new_speed: Speed):
-	speed = new_speed	
+	speed = new_speed
+	var wait_time := 1.0
+
 	match speed:
 		Speed.PAUSE:
 			timer.stop()
+			return  # Skip multiplier update when paused
 		Speed.PLAY:
-			timer.wait_time = 1.0
-			timer.start()
+			wait_time = 1.0
 		Speed.FAST:
-			timer.wait_time = 0.3
-			timer.start()
+			wait_time = 0.3
 		Speed.SUPER_FAST:
-			timer.wait_time = 0.1
-			timer.start()
-	print("wait time =  ", timer.wait_time)
+			wait_time = 0.1
+
+	timer.wait_time = wait_time
+	timer.start()
+
+	# Call setter on all citizens
+	var multiplier = 1.0
+	if wait_time == 0.3:
+		multiplier = 3.33
+	elif wait_time == 0.1:
+		multiplier = 10.0
+
+	if citizen.has_method("set_speed_multiplier"):
+		citizen.set_speed_multiplier(multiplier)
+	
+	
 	
 
 func pause(): set_speed(Speed.PAUSE)

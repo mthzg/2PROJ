@@ -9,3 +9,4 @@ res://scenes/main_scene.gd
 res://scenes/clock.gd
 res://scenes/time_control.gd
 res://GameClock.gd
+res://scenes/citizen.gd

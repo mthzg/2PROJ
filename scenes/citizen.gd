@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-var terrain_tilemap: TileMap  # Parent TileMap that owns the layers
+var terrain_tilemap: TileMap
 var ground_layer: TileMapLayer
 var rocks_layer: TileMapLayer
 var water_layer: TileMapLayer
@@ -10,43 +10,60 @@ var work_spot_cells: Dictionary
 var citizen_house_position: Vector2i
 var time_to_live: int
 
-@export var speed: float = 50.0
+var speed: float
+var _speed_multiplier: float
 
-# Internal pathfinding state
+func _ready() -> void:
+	speed = 50.0
+	_speed_multiplier = 1.0
+
+# Getter function to access the private variable
+func get_speed_multiplier() -> float:
+	return _speed_multiplier
+
 var path: Array[Vector2i] = []
 var path_index := 0
-
-func _ready():
-	if terrain_tilemap == null:
-		push_error("❌ terrain_tilemap is not set!")
-		return
-
-	velocity = Vector2.RIGHT * speed
-	print("✅ Citizen ready with velocity: ", velocity)
 
 func _physics_process(delta):
 	if terrain_tilemap == null:
 		return
 
+	var direction = get_movement_direction()
+	
+	# Directly use _speed_multiplier without intermediate variable
+	print(_speed_multiplier)
+	velocity = direction * speed * _speed_multiplier
+	
+	move_and_slide()
+
+func set_speed_multiplier(multiplier: float) -> void:
+	_speed_multiplier = multiplier
+	print("🚀 Speed multiplier set to: ", _speed_multiplier)
+
+
+func get_movement_direction() -> Vector2:
+	# Prioritize path-following
+	if path.size() > 0 and path_index < path.size():
+		var target_cell = path[path_index]
+		var target_pos = terrain_tilemap.to_global(terrain_tilemap.map_to_local(target_cell))
+		var dir = (target_pos - global_position).normalized()
+
+		if global_position.distance_to(target_pos) < 4.0:
+			path_index += 1
+
+		return dir
+
+	# Idle behavior
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var cell = terrain_tilemap.local_to_map(local_pos)
 
-	# Follow path if available
-	if path.size() > 0:
-		move_along_path(delta)
-		return
-
-	# Default idle movement logic
 	if is_over_water(cell):
-		velocity = Vector2.ZERO
-	elif is_on_road(cell):
-		velocity = Vector2.RIGHT * speed
-	elif occupied_cells.has(cell):
-		velocity = Vector2.RIGHT * speed  # ✅ Can walk on buildings
+		return Vector2.ZERO
+	elif is_on_road(cell) or occupied_cells.has(cell):
+		return Vector2.RIGHT
 	else:
-		velocity = Vector2.ZERO
+		return Vector2.ZERO
 
-	move_and_slide()
 
 	
 
@@ -59,12 +76,11 @@ func is_over_water(cell: Vector2i) -> bool:
 	var water_tile = water_layer.get_cell_source_id(cell)
 	return water_tile != -1 or (ground_tile == -1 and rocks_tile == -1)
 
-
 func go_gather(resource_type: String) -> void:
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var start_cell = terrain_tilemap.local_to_map(local_pos)
 
-	var nearest: Vector2i = Vector2i.ZERO
+	var nearest := Vector2i.ZERO
 	var found := false
 	var min_distance := INF
 
@@ -85,8 +101,6 @@ func go_gather(resource_type: String) -> void:
 	work_spot_cells[nearest].current_workers += 1
 	path = find_path(start_cell, nearest)
 	path_index = 0
-
-
 
 func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 	var open_set = [start]
@@ -114,7 +128,6 @@ func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 
 	return []
 
-
 func is_valid_tile(cell: Vector2i) -> bool:
 	if is_over_water(cell):
 		return false
@@ -123,12 +136,10 @@ func is_valid_tile(cell: Vector2i) -> bool:
 	var rocks_tile = rocks_layer.get_cell_source_id(cell)
 	var water_tile = water_layer.get_cell_source_id(cell)
 
-	# Allow ground or road if not blocked
 	if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
 		return false
 
 	return true
-
 
 func reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2i]:
 	var total_path: Array[Vector2i] = [current]
@@ -136,19 +147,3 @@ func reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2
 		current = came_from[current]
 		total_path.insert(0, current)
 	return total_path
-
-
-func move_along_path(delta):
-	if path_index >= path.size():
-		velocity = Vector2.ZERO
-		return
-
-	var target_cell = path[path_index]
-	var target_pos = terrain_tilemap.to_global(terrain_tilemap.map_to_local(target_cell))
-	var direction = (target_pos - global_position).normalized()
-
-	velocity = direction * speed
-	move_and_slide()
-
-	if global_position.distance_to(target_pos) < 4.0:
-		path_index += 1
