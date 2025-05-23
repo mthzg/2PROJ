@@ -5,3 +5,4 @@ res://scenes/clock.tscn
 res://scenes/main_scene.tscn
 res://scenes/Buildings/Citizen.tscn
 res://scenes/main_menu.tscn
+res://scenes/clock.gd
