@@ -1,4 +1,4 @@
-extends Node
+extends HBoxContainer
 
 signal time_updated(current_time: String)
 

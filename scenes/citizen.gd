@@ -8,6 +8,7 @@ var road_positions: Dictionary
 var occupied_cells: Dictionary 
 var work_spot_cells: Dictionary
 var citizen_house_position: Vector2i
+var time_to_live: int
 
 @export var speed: float = 50.0
 
@@ -47,6 +48,7 @@ func _physics_process(delta):
 
 	move_and_slide()
 
+	
 
 func is_on_road(cell: Vector2i) -> bool:
 	return road_positions.has(cell)
@@ -67,20 +69,23 @@ func go_gather(resource_type: String) -> void:
 	var min_distance := INF
 
 	for target_cell in work_spot_cells.keys():
-		if work_spot_cells[target_cell] == resource_type:
+		var data = work_spot_cells[target_cell]
+		if data.type == resource_type and data.current_workers < data.max_workers:
 			var dist = start_cell.distance_to(target_cell)
 			if dist < min_distance:
 				min_distance = dist
 				nearest = target_cell
 				found = true
 
-	if nearest == null:
+	if not found:
 		print("❌ No available resource spot of type: ", resource_type)
 		return
 
 	print("🎯 Going to gather ", resource_type, " at ", nearest)
+	work_spot_cells[nearest].current_workers += 1
 	path = find_path(start_cell, nearest)
 	path_index = 0
+
 
 
 func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
@@ -113,7 +118,16 @@ func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 func is_valid_tile(cell: Vector2i) -> bool:
 	if is_over_water(cell):
 		return false
-	return road_positions.has(cell) or occupied_cells.has(cell)
+
+	var ground_tile = ground_layer.get_cell_source_id(cell)
+	var rocks_tile = rocks_layer.get_cell_source_id(cell)
+	var water_tile = water_layer.get_cell_source_id(cell)
+
+	# Allow ground or road if not blocked
+	if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
+		return false
+
+	return true
 
 
 func reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2i]:

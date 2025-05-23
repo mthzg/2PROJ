@@ -19,6 +19,47 @@ var is_ghost_active = false
 var current_building_data = null
 var max_citizens = null
 
+func spawn_30_trees():
+	var placed = 0
+	var map_bounds = ground_layer.get_used_rect()
+
+	while placed < 30:
+		var rand_x = randi() % map_bounds.size.x + map_bounds.position.x
+		var rand_y = randi() % map_bounds.size.y + map_bounds.position.y
+		var cell = Vector2i(rand_x, rand_y)
+
+		# Check if cell is free and valid
+		if occupied_cells.has(cell):
+			continue
+		
+		var ground_tile = ground_layer.get_cell_source_id(cell)
+		var rocks_tile = rocks_layer.get_cell_source_id(cell)
+		var water_tile = water_layer.get_cell_source_id(cell)
+		if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
+			continue
+
+		# Directly place the tree building here
+		var tree_scene = preload("res://scenes/Buildings/Tree.tscn")
+		var instance = tree_scene.instantiate()
+		var local_pos = ground_layer.map_to_local(cell)
+		instance.global_position = ground_layer.to_global(local_pos)
+		add_child(instance)
+
+		# Mark cell occupied and work spot for wood
+		occupied_cells[cell] = "Tree"
+		work_spot_cells[cell] = {
+			"type": "tree",
+			"max_workers": 1,
+			"current_workers": 0
+		}
+
+		placed += 1
+
+# Call this in _ready
+func _ready():
+	spawn_30_trees()
+
+
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if is_ghost_active:
@@ -83,6 +124,7 @@ func try_place_building(cell: Vector2i):
 func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
 	var occupancy = current_building_data.get("occupancy")
+
 	if scene == null:
 		return
 
@@ -96,47 +138,50 @@ func place_building(cell: Vector2i, size: Vector2i):
 			var occupied_cell = cell + Vector2i(x, y)
 			occupied_cells[occupied_cell] = current_building_data.get("name")
 
-			
 			if current_building_data.get("name") == "Dirt road":
 				road_positions[occupied_cell] = "Dirt road"
 			
 			if current_building_data.get("name") == "Tree":
-				work_spot_cells[occupied_cell] = "wood"
+				work_spot_cells[occupied_cell] = {
+					"type": "tree",
+					"max_workers": 1,
+					"current_workers": 0
+				}
 
-			
-					
-	
-	if occupancy:
-		for i in range(occupancy):
-			var citizen = citizen_scene.instantiate()
 
-			# Random spawn offset within the building footprint
-			var offset = Vector2(
-				randf_range(0, size.x * tile_size.x),
-				randf_range(0, size.y * tile_size.y)
-			)
-			var spawn_position = ground_layer.to_global(ground_layer.map_to_local(cell)) + offset
-			citizen.global_position = spawn_position
-
-			# Assign tilemaps and layers
-			citizen.terrain_tilemap = self
-			citizen.ground_layer = ground_layer
-			citizen.rocks_layer = rocks_layer
-			citizen.water_layer = water_layer
-
-			citizen.road_positions = road_positions
-			citizen.occupied_cells = occupied_cells
-			citizen.work_spot_cells = work_spot_cells
-			
-			citizen.citizen_house_position = cell
-			
-
-			add_child(citizen)
-			citizen.go_gather("wood")
 
 	#place building in a row once one is selected		
 	#current_building_data = null
+func spawn_citizens():
+	var spawn_cell = Vector2i(-1, -6)
+	var spawn_position: Vector2 = ground_layer.to_global(ground_layer.map_to_local(spawn_cell))
 
+	var citizen = citizen_scene.instantiate()
+
+	# Optional: slight random offset within tile
+	var offset = Vector2(
+		randf_range(0, tile_size.x),
+		randf_range(0, tile_size.y)
+	)
+	citizen.global_position = spawn_position + offset
+
+	# Assign tilemaps and layers
+	citizen.terrain_tilemap = self
+	citizen.ground_layer = ground_layer
+	citizen.rocks_layer = rocks_layer
+	citizen.water_layer = water_layer
+	citizen.road_positions = road_positions
+	citizen.occupied_cells = occupied_cells
+	citizen.work_spot_cells = work_spot_cells
+	citizen.citizen_house_position = spawn_cell
+	citizen.time_to_live = 300
+
+	add_child(citizen)
+	return citizen
+
+
+
+	
 
 # Optionally: add a method to change current building selection
 func set_current_building(building_data) -> void:
