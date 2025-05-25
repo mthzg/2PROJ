@@ -221,30 +221,60 @@ func set_current_building(building_data) -> void:
 	var mouse_pos = get_global_mouse_position()
 	ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
 
+func clear_buildings():
+	for child in get_children():
+		# Optionally skip non-building nodes like layers if needed
+		if child is Node2D and not child.name in ["Ground", "Rocks", "Water"]:
+			child.queue_free()
+
+	# Clear internal tracking dictionaries
+	occupied_cells.clear()
+	road_positions.clear()
+	work_spot_cells.clear()
+
 
 func delete_building_at(cell: Vector2i) -> bool:
 	if not occupied_cells.has(cell):
 		print("❌ No building found at ", cell)
 		return false
-	
+
 	var building_name = occupied_cells[cell]
-	
-	# Remove from occupied_cells
 	occupied_cells.erase(cell)
-	
-	# Remove from work_spot_cells if exists
 	if work_spot_cells.has(cell):
 		work_spot_cells.erase(cell)
-	
-	# Remove from road_positions if relevant
 	if road_positions.has(cell):
 		road_positions.erase(cell)
-	
-	# Find and remove instance node at cell:
+
 	for child in get_children():
 		if child.global_position == ground_layer.to_global(ground_layer.map_to_local(cell)):
 			child.queue_free()
-			break
-	
-	print("✅ Deleted building ", building_name, " at ", cell)
-	return true
+			print("✅ Deleted building ", building_name, " at ", cell)
+			return true  # return only when actual deletion happens
+
+	print("⚠ Building data erased but node not found.")
+	return false  # fallback if node not found
+
+			
+func get_building_data_from_name(name: String) -> Dictionary:
+	var all_buildings = {
+		"House": {
+			"name": "House",
+			"scene": preload("res://scenes/Buildings/Small_House.tscn"),
+			"size": Vector2i(2, 2),
+			"cost": {"wood": 10},
+			"occupancy": 3
+		},
+		"Dirt road": {
+			"name": "Dirt road",
+			"scene": preload("res://scenes/Buildings/dirt_road.tscn"),
+			"size": Vector2i(1, 1),
+			"cost": {}
+		},
+		"Tree": {
+			"name": "Tree",
+			"scene": preload("res://scenes/Buildings/Tree.tscn"),
+			"size": Vector2i(1, 1),
+			"cost": {}
+		}
+	}
+	return all_buildings.get(name)

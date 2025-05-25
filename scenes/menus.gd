@@ -2,7 +2,7 @@ extends CanvasLayer
 
 @onready var clock = get_node("../CanvasLayer/Control/Clock")
 const SAVE_FILE_PATH := "user://savegame.save"
-@onready var building_placement = get_node("../BuildingPlacement")  # adjust the path as needed
+var building_placement
 
 @onready var MenuRoot = $MenuRoot  # The VBoxContainer or Panel holding all buttons
 
@@ -14,8 +14,12 @@ var buildings := []
 
 
 func _ready():
+	building_placement = get_node_or_null("../Terrain")
+	if building_placement == null:
+		print("Could not find BuildingPlacement node!")
 	self.visible = false
 	set_process_unhandled_input(true)
+
 
 func _unhandled_input(event):
 	if event.is_action_pressed("ui_cancel"):
@@ -96,9 +100,6 @@ func _on_save_game_pressed():
 				"type": name,
 				"cell": cell
 			})
-
-
-
 		file.store_var(save_data)
 		print("Game saved:", save_data)
 

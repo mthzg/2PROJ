@@ -7,7 +7,5 @@ res://scenes/Buildings/Citizen.tscn
 res://scenes/menus.tscn
 res://scenes/Building_Placement.gd
 res://scenes/citizen.gd
-res://scenes/clock.gd
-res://scenes/hud_control.gd
 res://scenes/main_scene.gd
 res://scenes/menus.gd
