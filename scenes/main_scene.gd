@@ -10,10 +10,13 @@ var minute_counter := 0
 var total_citizens: int = 0
 var max_citizens: int = 15
 var citizens := []
-var wood: int
+var wood: int = 10
 
 
 func _ready():
+	# Pass self reference to terrain for resource access
+	terrain.main_game = self  # terrain script will have `var main_game` to hold this
+
 	for i in range(10):
 		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 		total_citizens += 1
@@ -62,6 +65,12 @@ func set_speed_multiplier(multiplier: float) -> void:
 			c.set_speed_multiplier(multiplier)
 			c.refresh_velocity()  # Optional if you want immediate effect
 
+func can_spend_wood(amount: int) -> bool:
+	return wood >= amount
+
+func spend_wood(amount: int) -> void:
+	wood -= amount
+	print("Wood spent:", amount, " Remaining wood:", wood)
 
 
 
