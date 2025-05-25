@@ -184,14 +184,38 @@ func spawn_citizens(speed_multiplier: float = 1.0):
 	add_child(citizen)
 	return citizen
 
-
-
-
-	
-
 # Optionally: add a method to change current building selection
 func set_current_building(building_data) -> void:
 	current_building_data = building_data
 	is_ghost_active = true
 	var mouse_pos = get_global_mouse_position()
 	ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
+
+
+func clear_buildings():
+	for child in get_children():
+		if child.name != "Ground" and child.name != "Rocks" and child.name != "Water":
+			child.queue_free()
+	occupied_cells.clear()
+	work_spot_cells.clear()
+	road_positions.clear()
+
+func get_building_data_from_name(name: String):
+	match name:
+		"Tree":
+			return {
+				"name": "Tree",
+				"scene": preload("res://scenes/Buildings/Tree.tscn"),
+				"size": Vector2i(1, 1),
+				"occupancy": 1
+			}
+		"Dirt road":
+			return {
+				"name": "Dirt road",
+				"scene": preload("res://scenes/Buildings/dirt_road.tscn"),
+				"size": Vector2i(1, 1),
+				"occupancy": 0
+			}
+		# Add more buildings here...
+		_:
+			return null
