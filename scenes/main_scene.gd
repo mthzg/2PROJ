@@ -4,20 +4,20 @@ extends Node2D
 @onready var terrain = get_node("Terrain")
 @onready var citizen = get_node("Citizen")
 
+var current_speed_multiplier: float = 1.0
 
 var minute_counter := 0
 var total_citizens: int = 0
-var max_citizens: int = 15  # Initial max citizens
+var max_citizens: int = 15
 var citizens := []
 var wood: int
 
 
 func _ready():
 	for i in range(10):
-		var new_citizen = terrain.spawn_citizens()
+		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 		total_citizens += 1
 		citizens.append(new_citizen)
-		new_citizen.go_gather("tree")
 
 	if clock.has_signal("time_updated"):
 		clock.connect("time_updated", Callable(self, "_on_time_updated"))
@@ -43,7 +43,7 @@ func _on_time_updated(current_time: String) -> void:
 	if minute_counter >= 20:
 		minute_counter = 0
 		if total_citizens < max_citizens:
-			var new_citizen = terrain.spawn_citizens()
+			var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 			if new_citizen:
 				citizens.append(new_citizen)
 				total_citizens += 1
@@ -52,6 +52,17 @@ func _on_time_updated(current_time: String) -> void:
 			print("Max = ", max_citizens)
 		else:
 			print("Max citizens reached. No new spawn.")
+			
+			
+func set_speed_multiplier(multiplier: float) -> void:
+	current_speed_multiplier = multiplier
+	print("setter called value = ", multiplier)
+	for c in citizens:
+		if is_instance_valid(c):
+			c.set_speed_multiplier(multiplier)
+			c.refresh_velocity()  # Optional if you want immediate effect
+
+
 
 
 func increase_max_citizens(amount: int = 1) -> void:

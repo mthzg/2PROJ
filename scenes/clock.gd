@@ -1,5 +1,5 @@
 extends Panel
-@onready var citizen = get_node("../../../Citizen")
+@onready var main = get_node("../../../../Node2D")
 
 signal time_updated(current_time: String)
 
@@ -17,7 +17,7 @@ const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Se
 var timer := Timer.new()
 
 func _ready():
-	print ("clock citizen node = ",citizen)
+	print ("clock citizen node = ",main)
 	#GameClock.time_updated.connect(_update_ui)
 	#_update_ui(GameClock.get_time_string())
 	# Setup timer
@@ -89,8 +89,8 @@ func set_speed(new_speed: Speed):
 	elif wait_time == 0.1:
 		multiplier = 10.0
 
-	if citizen.has_method("set_speed_multiplier"):
-		citizen.set_speed_multiplier(multiplier)
+	if main.has_method("set_speed_multiplier"):
+		main.set_speed_multiplier(multiplier)
 	
 	
 	

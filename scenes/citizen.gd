@@ -10,12 +10,8 @@ var work_spot_cells: Dictionary
 var citizen_house_position: Vector2i
 var time_to_live: int
 
-var speed: float
-var _speed_multiplier: float
-
-func _ready() -> void:
-	speed = 50.0
-	_speed_multiplier = 1.0
+var speed: float = 50
+var _speed_multiplier: float = 1.0
 
 # Getter function to access the private variable
 func get_speed_multiplier() -> float:
@@ -31,7 +27,6 @@ func _physics_process(delta):
 	var direction = get_movement_direction()
 	
 	# Directly use _speed_multiplier without intermediate variable
-	print(_speed_multiplier)
 	velocity = direction * speed * _speed_multiplier
 	
 	move_and_slide()
@@ -39,6 +34,10 @@ func _physics_process(delta):
 func set_speed_multiplier(multiplier: float) -> void:
 	_speed_multiplier = multiplier
 	print("🚀 Speed multiplier set to: ", _speed_multiplier)
+
+func refresh_velocity():
+	var direction = get_movement_direction()
+	velocity = direction * speed * _speed_multiplier
 
 
 func get_movement_direction() -> Vector2:

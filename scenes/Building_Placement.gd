@@ -19,6 +19,7 @@ var is_ghost_active = false
 var current_building_data = null
 var max_citizens = null
 
+
 func spawn_30_trees():
 	var placed = 0
 	var map_bounds = ground_layer.get_used_rect()
@@ -147,12 +148,13 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"max_workers": 1,
 					"current_workers": 0
 				}
+			
 
 
 
 	#place building in a row once one is selected		
 	#current_building_data = null
-func spawn_citizens():
+func spawn_citizens(speed_multiplier: float = 1.0):
 	var spawn_cell = Vector2i(-1, -6)
 	var spawn_position: Vector2 = ground_layer.to_global(ground_layer.map_to_local(spawn_cell))
 
@@ -176,8 +178,12 @@ func spawn_citizens():
 	citizen.citizen_house_position = spawn_cell
 	citizen.time_to_live = 300
 
+	# Apply speed multiplier
+	citizen.set_speed_multiplier(speed_multiplier)
+
 	add_child(citizen)
 	return citizen
+
 
 
 
