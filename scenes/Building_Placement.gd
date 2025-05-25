@@ -7,6 +7,7 @@ extends TileMap
 @onready var water_layer := get_node("Water")
 var citizen_scene := preload("res://scenes/Buildings/Citizen.tscn")
 
+var main_game  # reference to main script (set from main)
 var tile_size: Vector2 = Vector2(16, 16)
 var occupied_cells = {}
 var road_positions: = {}
@@ -18,6 +19,7 @@ var is_ghost_active = false
 
 var current_building_data = null
 var max_citizens = null
+
 
 
 func spawn_30_trees():
@@ -98,7 +100,7 @@ func _draw():
 # Try place building with ID parameter, returns true if placement succeeded
 func try_place_building(cell: Vector2i):
 	if current_building_data == null:
-		return
+		return false
 
 	var size = current_building_data.get("size", Vector2i(1, 1))
 
@@ -112,19 +114,40 @@ func try_place_building(cell: Vector2i):
 
 			if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
 				print("Cannot place; blocked at cell ", check_cell)
-				return
+				return false
 
 			if check_cell in occupied_cells:
 				print("Cannot place; occupied at cell ", check_cell)
-				return
+				return false
+	
+	# Check resource cost
+	var cost = current_building_data.get("cost", {})
+	if main_game != null:
+		for resource_name in cost.keys():
+			var amount = cost[resource_name]
+			if resource_name == "wood":
+				if not main_game.can_spend_wood(amount):
+					print("Not enough wood to place building!")
+					return false
+			else:
+				# Implement other resource checks here if needed
+				pass
+	
+	# If all clear, deduct resources
+	if main_game != null:
+		for resource_name in cost.keys():
+			var amount = cost[resource_name]
+			if resource_name == "wood":
+				main_game.spend_wood(amount)
 
 	print("✅ Placing building at ", cell)
 	place_building(cell, size)
+	return true
 
 # Place building by ID, mark cells occupied
 func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
-	var occupancy = current_building_data.get("occupancy")
+	var occupancy = current_building_data.get("occupancy", 0)
 
 	if scene == null:
 		return
@@ -148,7 +171,11 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"max_workers": 1,
 					"current_workers": 0
 				}
-			
+
+	# Update max citizens on main game script
+	if occupancy > 0 and main_game != null:
+		main_game.increase_max_citizens(occupancy)
+
 
 
 
