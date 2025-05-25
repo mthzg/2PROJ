@@ -13,32 +13,31 @@ var time_to_live: int
 var speed: float = 50
 var _speed_multiplier: float = 1.0
 
-# Getter function to access the private variable
-func get_speed_multiplier() -> float:
-	return _speed_multiplier
+var main_game: Node = null  # Reference to main script to call increment_wood()
 
 var path: Array[Vector2i] = []
 var path_index := 0
+var gather_target: Vector2i = Vector2i.ZERO
+var is_gathering: bool = false
+
+# Getter function to access the private variable
+func get_speed_multiplier() -> float:
+	return _speed_multiplier
 
 func _physics_process(delta):
 	if terrain_tilemap == null:
 		return
 
 	var direction = get_movement_direction()
-	
-	# Directly use _speed_multiplier without intermediate variable
 	velocity = direction * speed * _speed_multiplier
-	
 	move_and_slide()
 
 func set_speed_multiplier(multiplier: float) -> void:
 	_speed_multiplier = multiplier
-	print("🚀 Speed multiplier set to: ", _speed_multiplier)
 
 func refresh_velocity():
 	var direction = get_movement_direction()
 	velocity = direction * speed * _speed_multiplier
-
 
 func get_movement_direction() -> Vector2:
 	# Prioritize path-following
@@ -49,6 +48,9 @@ func get_movement_direction() -> Vector2:
 
 		if global_position.distance_to(target_pos) < 4.0:
 			path_index += 1
+			# Reached final target
+			if path_index >= path.size() and not is_gathering:
+				start_gathering()
 
 		return dir
 
@@ -62,9 +64,6 @@ func get_movement_direction() -> Vector2:
 		return Vector2.RIGHT
 	else:
 		return Vector2.ZERO
-
-
-	
 
 func is_on_road(cell: Vector2i) -> bool:
 	return road_positions.has(cell)
@@ -85,7 +84,12 @@ func go_gather(resource_type: String) -> void:
 
 	for target_cell in work_spot_cells.keys():
 		var data = work_spot_cells[target_cell]
-		if data.type == resource_type and data.current_workers < data.max_workers:
+
+		if (
+			data.type == resource_type and
+			data.current_workers < data.max_workers and
+			data.get("is_startup", false)
+		):
 			var dist = start_cell.distance_to(target_cell)
 			if dist < min_distance:
 				min_distance = dist
@@ -93,13 +97,35 @@ func go_gather(resource_type: String) -> void:
 				found = true
 
 	if not found:
-		print("❌ No available resource spot of type: ", resource_type)
+		print("❌ No available startup resource spot of type: ", resource_type)
 		return
 
-	print("🎯 Going to gather ", resource_type, " at ", nearest)
 	work_spot_cells[nearest].current_workers += 1
+	gather_target = nearest
 	path = find_path(start_cell, nearest)
 	path_index = 0
+	
+	
+func start_gathering():
+	is_gathering = true
+
+	var gather_time = 5.0 / _speed_multiplier
+	await get_tree().create_timer(gather_time).timeout
+
+	# Call the building deletion method on terrain_tilemap
+	if terrain_tilemap and terrain_tilemap.has_method("delete_building_at"):
+		terrain_tilemap.delete_building_at(gather_target)
+
+	# Call increment_wood on main_game
+	if main_game and main_game.has_method("increment_wood"):
+		main_game.increment_wood(1)
+	
+	
+
+	is_gathering = false
+	go_gather("tree")
+
+
 
 func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 	var open_set = [start]

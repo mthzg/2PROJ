@@ -10,7 +10,7 @@ var minute_counter := 0
 var total_citizens: int = 0
 var max_citizens: int = 15
 var citizens := []
-var wood: int = 10
+var wood: int = 0
 
 
 func _ready():
@@ -21,6 +21,9 @@ func _ready():
 		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 		total_citizens += 1
 		citizens.append(new_citizen)
+		new_citizen.main_game = self
+		new_citizen.go_gather("tree")
+		
 
 	if clock.has_signal("time_updated"):
 		clock.connect("time_updated", Callable(self, "_on_time_updated"))
@@ -50,6 +53,7 @@ func _on_time_updated(current_time: String) -> void:
 			if new_citizen:
 				citizens.append(new_citizen)
 				total_citizens += 1
+				new_citizen.main_game = self
 				new_citizen.go_gather("tree")
 			print("Total citizens = ", total_citizens)
 			print("Max = ", max_citizens)
@@ -71,6 +75,10 @@ func can_spend_wood(amount: int) -> bool:
 func spend_wood(amount: int) -> void:
 	wood -= amount
 	print("Wood spent:", amount, " Remaining wood:", wood)
+
+func increment_wood(amount: int):
+	wood += amount
+	print("🌳 Total wood in main script: ", wood)
 
 
 

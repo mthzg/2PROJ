@@ -22,11 +22,12 @@ var max_citizens = null
 
 
 
+
 func spawn_30_trees():
 	var placed = 0
 	var map_bounds = ground_layer.get_used_rect()
 
-	while placed < 60:
+	while placed < 30:
 		var rand_x = randi() % map_bounds.size.x + map_bounds.position.x
 		var rand_y = randi() % map_bounds.size.y + map_bounds.position.y
 		var cell = Vector2i(rand_x, rand_y)
@@ -53,8 +54,10 @@ func spawn_30_trees():
 		work_spot_cells[cell] = {
 			"type": "tree",
 			"max_workers": 1,
-			"current_workers": 0
+			"current_workers": 0,
+			"is_startup": true  # <<< THIS is the key
 		}
+		
 
 		placed += 1
 
@@ -219,30 +222,29 @@ func set_current_building(building_data) -> void:
 	ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
 
 
-func clear_buildings():
+func delete_building_at(cell: Vector2i) -> bool:
+	if not occupied_cells.has(cell):
+		print("❌ No building found at ", cell)
+		return false
+	
+	var building_name = occupied_cells[cell]
+	
+	# Remove from occupied_cells
+	occupied_cells.erase(cell)
+	
+	# Remove from work_spot_cells if exists
+	if work_spot_cells.has(cell):
+		work_spot_cells.erase(cell)
+	
+	# Remove from road_positions if relevant
+	if road_positions.has(cell):
+		road_positions.erase(cell)
+	
+	# Find and remove instance node at cell:
 	for child in get_children():
-		if child.name != "Ground" and child.name != "Rocks" and child.name != "Water":
+		if child.global_position == ground_layer.to_global(ground_layer.map_to_local(cell)):
 			child.queue_free()
-	occupied_cells.clear()
-	work_spot_cells.clear()
-	road_positions.clear()
-
-func get_building_data_from_name(name: String):
-	match name:
-		"Tree":
-			return {
-				"name": "Tree",
-				"scene": preload("res://scenes/Buildings/Tree.tscn"),
-				"size": Vector2i(1, 1),
-				"occupancy": 1
-			}
-		"Dirt road":
-			return {
-				"name": "Dirt road",
-				"scene": preload("res://scenes/Buildings/dirt_road.tscn"),
-				"size": Vector2i(1, 1),
-				"occupancy": 0
-			}
-		# Add more buildings here...
-		_:
-			return null
+			break
+	
+	print("✅ Deleted building ", building_name, " at ", cell)
+	return true
