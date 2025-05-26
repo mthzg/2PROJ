@@ -19,6 +19,20 @@ var path: Array[Vector2i] = []
 var path_index := 0
 var gather_target: Vector2i = Vector2i.ZERO
 var is_gathering: bool = false
+var is_returning_home: bool = false
+var has_gathered_resource: bool = false
+
+
+var house_position: Vector2i = Vector2i.ZERO  # default, not null
+
+func assign_house(house_pos: Vector2i):
+	house_position = house_pos
+	print("Citizen assigned to house at: ", house_pos)
+
+	# If not already working or returning home, start gathering
+	if not is_gathering and not is_returning_home and !has_gathered_resource:
+		go_gather("tree")
+
 
 # Getter function to access the private variable
 func get_speed_multiplier() -> float:
@@ -46,15 +60,30 @@ func get_movement_direction() -> Vector2:
 		var target_pos = terrain_tilemap.to_global(terrain_tilemap.map_to_local(target_cell))
 		var dir = (target_pos - global_position).normalized()
 
+		# Close enough to target tile, advance to next step
 		if global_position.distance_to(target_pos) < 4.0:
 			path_index += 1
-			# Reached final target
-			if path_index >= path.size() and not is_gathering:
-				start_gathering()
+
+			# Reached final destination
+			if path_index >= path.size():
+				if is_returning_home:
+					is_returning_home = false
+
+					# Only give resource after returning home
+					if has_gathered_resource:
+						has_gathered_resource = false
+						if main_game and main_game.has_method("increment_wood"):
+							main_game.increment_wood(1)
+
+					# Start another task if needed
+					go_gather("tree")
+
+				elif not is_gathering:
+					start_gathering()
 
 		return dir
 
-	# Idle behavior
+	# Idle fallback behavior
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var cell = terrain_tilemap.local_to_map(local_pos)
 
@@ -64,6 +93,7 @@ func get_movement_direction() -> Vector2:
 		return Vector2.RIGHT
 	else:
 		return Vector2.ZERO
+
 
 func is_on_road(cell: Vector2i) -> bool:
 	return road_positions.has(cell)
@@ -75,6 +105,11 @@ func is_over_water(cell: Vector2i) -> bool:
 	return water_tile != -1 or (ground_tile == -1 and rocks_tile == -1)
 
 func go_gather(resource_type: String) -> void:
+	
+	if house_position == Vector2i.ZERO:
+		print("Citizen cannot work without a home.")
+		return
+		
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var start_cell = terrain_tilemap.local_to_map(local_pos)
 
@@ -97,7 +132,6 @@ func go_gather(resource_type: String) -> void:
 				found = true
 
 	if not found:
-		print("❌ No available startup resource spot of type: ", resource_type)
 		return
 
 	work_spot_cells[nearest].current_workers += 1
@@ -112,19 +146,24 @@ func start_gathering():
 	var gather_time = 5.0 / _speed_multiplier
 	await get_tree().create_timer(gather_time).timeout
 
-	# Call the building deletion method on terrain_tilemap
+	# Delete tree at gather_target
 	if terrain_tilemap and terrain_tilemap.has_method("delete_building_at"):
 		terrain_tilemap.delete_building_at(gather_target)
 
-	# Call increment_wood on main_game
-	if main_game and main_game.has_method("increment_wood"):
-		main_game.increment_wood(1)
-	
-	
-
+	# Instead of giving wood here, go home first
 	is_gathering = false
-	go_gather("tree")
+	has_gathered_resource = true
+	go_home()
 
+func go_home():
+	if house_position == Vector2i.ZERO:
+		return
+
+	is_returning_home = true
+	var local_pos = terrain_tilemap.to_local(global_position)
+	var start_cell = terrain_tilemap.local_to_map(local_pos)
+	path = find_path(start_cell, house_position)
+	path_index = 0
 
 
 func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:

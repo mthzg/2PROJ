@@ -20,6 +20,14 @@ var is_ghost_active = false
 var current_building_data = null
 var max_citizens = null
 
+var house_built_count = 0
+var free_house_limit = 5
+
+var houses = []  # List to track houses with their data (position, occupancy, assigned citizens)
+var unassigned_citizens = []  # Citizens waiting for house assignment
+
+
+
 
 
 
@@ -78,10 +86,14 @@ func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if is_ghost_active and ghost_cell != null:
 			if try_place_building(ghost_cell):
-				is_ghost_active = false
-				ghost_cell = null
-				current_building_data = null
+				#if current_building_data.get("name") != "Dirt road":
+				#	# Place building one by one
+				#	is_ghost_active = false
+				#	ghost_cell = null
+				#	current_building_data = null
+				pass
 			self.queue_redraw()
+
 			
 
 
@@ -101,7 +113,7 @@ func _draw():
 				draw_rect(Rect2(pos, tile_size), Color(0.2, 0.4, 1.0, 0.3), true)
 
 # Try place building with ID parameter, returns true if placement succeeded
-func try_place_building(cell: Vector2i):
+func try_place_building(cell: Vector2i) -> bool:
 	if current_building_data == null:
 		return false
 
@@ -116,27 +128,34 @@ func try_place_building(cell: Vector2i):
 			var water_tile = water_layer.get_cell_source_id(check_cell)
 
 			if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
-				print("Cannot place; blocked at cell ", check_cell)
+				print("❌ Cannot place; blocked at cell ", check_cell)
 				return false
 
 			if check_cell in occupied_cells:
-				print("Cannot place; occupied at cell ", check_cell)
+				print("❌ Cannot place; occupied at cell ", check_cell)
 				return false
-	
-	# Check resource cost
-	var cost = current_building_data.get("cost", {})
+
+	# Copy cost so we can modify it safely
+	var base_cost = current_building_data.get("cost", {})
+	var cost = base_cost.duplicate(true)  # Deep copy to avoid mutating original data
+
+	# Apply "first 5 houses free" rule
+	if current_building_data.get("name") == "Small House" and house_built_count < free_house_limit:
+		cost["wood"] = 0
+
+	# Check resources
 	if main_game != null:
 		for resource_name in cost.keys():
 			var amount = cost[resource_name]
 			if resource_name == "wood":
 				if not main_game.can_spend_wood(amount):
-					print("Not enough wood to place building!")
+					print("❌ Not enough wood to place building!")
 					return false
 			else:
-				# Implement other resource checks here if needed
+				# You can add other resource checks here if needed
 				pass
-	
-	# If all clear, deduct resources
+
+	# Deduct resources
 	if main_game != null:
 		for resource_name in cost.keys():
 			var amount = cost[resource_name]
@@ -146,6 +165,7 @@ func try_place_building(cell: Vector2i):
 	print("✅ Placing building at ", cell)
 	place_building(cell, size)
 	return true
+
 
 # Place building by ID, mark cells occupied
 func place_building(cell: Vector2i, size: Vector2i):
@@ -164,7 +184,9 @@ func place_building(cell: Vector2i, size: Vector2i):
 		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
 			occupied_cells[occupied_cell] = current_building_data.get("name")
+			
 
+				
 			if current_building_data.get("name") == "Dirt road":
 				road_positions[occupied_cell] = "Dirt road"
 			
@@ -174,23 +196,39 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"max_workers": 1,
 					"current_workers": 0
 				}
+	# Track house only once, not for every occupied cell
+	if current_building_data.get("name") == "Small House":
+		house_built_count += 1
+		houses.append({
+			"position": cell,
+			"occupancy": occupancy,
+			"assigned_citizens": []
+		})
+		assign_houses_to_citizens()  # assign immediately when house is placed
 
 	# Update max citizens on main game script
 	if occupancy > 0 and main_game != null:
 		main_game.increase_max_citizens(occupancy)
 
+func assign_houses_to_citizens():
+	for house in houses:
+		var max_occupancy = house["occupancy"]
+		while unassigned_citizens.size() > 0 and house["assigned_citizens"].size() < max_occupancy:
+			var citizen = unassigned_citizens.pop_front()
+			house["assigned_citizens"].append(citizen)
+			
+			# Assign house position to citizen
+			if citizen.has_method("assign_house"):
+				citizen.assign_house(house["position"])
 
-
-
-	#place building in a row once one is selected		
-	#current_building_data = null
+	
+	
 func spawn_citizens(speed_multiplier: float = 1.0):
 	var spawn_cell = Vector2i(-1, -6)
 	var spawn_position: Vector2 = ground_layer.to_global(ground_layer.map_to_local(spawn_cell))
 
 	var citizen = citizen_scene.instantiate()
 
-	# Optional: slight random offset within tile
 	var offset = Vector2(
 		randf_range(0, tile_size.x),
 		randf_range(0, tile_size.y)
@@ -212,7 +250,15 @@ func spawn_citizens(speed_multiplier: float = 1.0):
 	citizen.set_speed_multiplier(speed_multiplier)
 
 	add_child(citizen)
+
+	# Add citizen to unassigned list for house assignment
+	unassigned_citizens.append(citizen)
+
+	# Try assign house immediately in case a house exists
+	assign_houses_to_citizens()
+
 	return citizen
+
 
 # Optionally: add a method to change current building selection
 func set_current_building(building_data) -> void:
@@ -248,7 +294,6 @@ func delete_building_at(cell: Vector2i) -> bool:
 	for child in get_children():
 		if child.global_position == ground_layer.to_global(ground_layer.map_to_local(cell)):
 			child.queue_free()
-			print("✅ Deleted building ", building_name, " at ", cell)
 			return true  # return only when actual deletion happens
 
 	print("⚠ Building data erased but node not found.")
