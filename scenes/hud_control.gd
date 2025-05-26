@@ -1,12 +1,12 @@
 extends Control
 
 @onready var item_list: ItemList = $TabContainer/ItemList
-@onready var terrain_node: Node = get_node("../../Terrain")  # ✅ Updated to use the correct node name
+@onready var terrain_node: Node = get_node("../../Terrain")
 @onready var wood_label = $TabContainer/TabInfo/WoodLabel
 @onready var pop_label = $TabContainer/TabInfo/PopulationLabel
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
 
-
+var main_scene  # This will hold the reference to main_scene
 var building_id = null
 # Building ID to name/scene
 var building_data = {
@@ -65,6 +65,17 @@ func update_info_tab(wood: int, total_citizens: int, occupied_slots: int, total_
 	wood_label.text = "Total wood: %d" % wood
 	pop_label.text = "Population: %d" % total_citizens
 	house_label.text = "Houses full: %d / %d" % [occupied_slots, total_slots]
+	
+func _process(delta):
+	if main_scene:
+		var wood = main_scene.wood
+		var total_citizens = main_scene.total_citizens
+		
+		# You’ll want to calculate these housing values dynamically too:
+		var occupied = main_scene.total_citizens  # for now: one citizen = one slot used
+		var total_slots = 10  # <- you’ll want to replace this with actual housing slot logic
+
+		update_info_tab(wood, total_citizens, occupied, total_slots)
 	
 #func update_work_tab(workplaces: Array):
 #	var tab = $TabContainer/TabWork
