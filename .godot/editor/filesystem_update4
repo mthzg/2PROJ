@@ -1,8 +1,10 @@
+res://scenes/menus.tscn
+res://scenes/menus.gd
 res://scenes/Citizen.tscn
 res://scenes/hud.tscn
 res://scenes/time_control.tscn
 res://scenes/clock.tscn
 res://scenes/main_scene.tscn
 res://scenes/Buildings/Citizen.tscn
-res://scenes/menus.tscn
-res://scenes/camera_2d.gd
+res://scenes/Building_Placement.gd
+res://scenes/hud_control.gd

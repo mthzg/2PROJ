@@ -16,23 +16,28 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_6fi6k")
 
-[node name="ItemList" type="ItemList" parent="Control"]
+[node name="TabContainer" type="TabContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 192.0
-offset_top = 480.0
-offset_right = 920.0
-offset_bottom = 608.0
+offset_left = 64.0
+offset_top = 464.0
+offset_right = 1088.0
+offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 0
+current_tab = 0
+
+[node name="ItemList" type="ItemList" parent="Control/TabContainer"]
+layout_mode = 2
 max_columns = 7
 same_column_width = true
 icon_mode = 0
+metadata/_tab_index = 0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/ItemList"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/TabContainer/ItemList"]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -43,12 +48,12 @@ offset_top = 11.0
 offset_right = 9.0
 offset_bottom = 7.0
 
-[node name="Small_House" type="Sprite2D" parent="Control/ItemList/RichTextLabel"]
+[node name="Small_House" type="Sprite2D" parent="Control/TabContainer/ItemList/RichTextLabel"]
 position = Vector2(19, 16)
 scale = Vector2(1.14, 1.1)
 texture = ExtResource("1_5ysmq")
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="Control/ItemList"]
+[node name="RichTextLabel2" type="RichTextLabel" parent="Control/TabContainer/ItemList"]
 visible = false
 layout_mode = 0
 offset_left = 56.0
@@ -56,11 +61,11 @@ offset_top = 8.0
 offset_right = 91.0
 offset_bottom = 48.0
 
-[node name="Tree" type="Sprite2D" parent="Control/ItemList/RichTextLabel2"]
+[node name="Tree" type="Sprite2D" parent="Control/TabContainer/ItemList/RichTextLabel2"]
 position = Vector2(18, 19)
 texture = ExtResource("2_5ysmq")
 
-[node name="RichTextLabel3" type="RichTextLabel" parent="Control/ItemList"]
+[node name="RichTextLabel3" type="RichTextLabel" parent="Control/TabContainer/ItemList"]
 visible = false
 layout_mode = 0
 offset_left = 96.0
@@ -68,10 +73,29 @@ offset_top = 7.0
 offset_right = 129.0
 offset_bottom = 45.0
 
-[node name="Greatfire" type="Sprite2D" parent="Control/ItemList/RichTextLabel3"]
+[node name="Greatfire" type="Sprite2D" parent="Control/TabContainer/ItemList/RichTextLabel3"]
 position = Vector2(16, 20)
 scale = Vector2(0.35, 0.399999)
 texture = SubResource("CompressedTexture2D_6fi6k")
+
+[node name="TabInfo" type="VBoxContainer" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="TabWork" type="VBoxContainer" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Label" type="Label" parent="Control/TabContainer/TabWork"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/TabContainer/TabWork"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Control/TabContainer/TabWork"]
+layout_mode = 2
 
 [node name="TimeControl" parent="Control" instance=ExtResource("5_uo2fv")]
 layout_mode = 1

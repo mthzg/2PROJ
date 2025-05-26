@@ -68,10 +68,14 @@ func _on_load_game_pressed():
 				var type = b_data["type"]
 				var building_data = building_placement.get_building_data_from_name(type)
 				if building_data != null:
-					building_placement.set_current_building(building_data)
-					building_placement.try_place_building(cell)
+					building_placement.place_building_direct(cell, building_data)
+
+					var success = building_placement.try_place_building(cell)
+					if not success:
+						print("❌ Failed to place building:", type, "at", cell)
 				else:
 					print("⚠ Unknown building type:", type)
+
 
 
 

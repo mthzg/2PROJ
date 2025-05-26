@@ -254,6 +254,38 @@ func delete_building_at(cell: Vector2i) -> bool:
 	print("⚠ Building data erased but node not found.")
 	return false  # fallback if node not found
 
+func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
+	var size = building_data.get("size", Vector2i(1, 1))
+	var scene = building_data.get("scene")
+	if scene == null:
+		print("⚠ Missing scene for", building_data.get("name"))
+		return
+
+	var instance = scene.instantiate()
+	var local_pos = ground_layer.map_to_local(cell)
+	instance.global_position = ground_layer.to_global(local_pos)
+	add_child(instance)
+
+	for x in range(size.x):
+		for y in range(size.y):
+			var occupied_cell = cell + Vector2i(x, y)
+			occupied_cells[occupied_cell] = building_data.get("name")
+
+			if building_data.get("name") == "Dirt road":
+				road_positions[occupied_cell] = "Dirt road"
+			
+			if building_data.get("name") == "Tree":
+				work_spot_cells[occupied_cell] = {
+					"type": "tree",
+					"max_workers": 1,
+					"current_workers": 0
+				}
+
+	# Apply occupancy if needed
+	var occupancy = building_data.get("occupancy", 0)
+	if occupancy > 0 and main_game:
+		main_game.increase_max_citizens(occupancy)
+
 			
 func get_building_data_from_name(name: String) -> Dictionary:
 	var all_buildings = {
@@ -277,4 +309,4 @@ func get_building_data_from_name(name: String) -> Dictionary:
 			"cost": {}
 		}
 	}
-	return all_buildings.get(name)
+	return all_buildings.get(name, {})
