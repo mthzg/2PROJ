@@ -11,7 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.137255, 0.396078, 0.721569, 1)
+color = Color(0.137255, 0.396078, 0.721569, 0.647059)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainMenu"]
 layout_mode = 1

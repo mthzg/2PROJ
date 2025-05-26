@@ -1,8 +1,9 @@
-RichTextLabel
+Label
 VBoxContainer
 Button
+TabContainer
+RichTextLabel
 ColorRect
 HBoxContainer
 CanvasLayer
-Label
 Panel

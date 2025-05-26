@@ -3,6 +3,7 @@ extends Node2D
 @onready var clock = get_node("CanvasLayer/Control/Clock")
 @onready var terrain = get_node("Terrain")
 @onready var citizen = get_node("Citizen")
+@onready var hud_control = get_node("CanvasLayer/Control")
 
 var current_speed_multiplier: float = 1.0
 
@@ -15,6 +16,7 @@ var wood: int = 0
 
 func _ready():
 	# Pass self reference to terrain for resource access
+	hud_control.main_scene = self
 	terrain.main_game = self  # terrain script will have `var main_game` to hold this
 
 	for i in range(10):
