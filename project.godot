@@ -22,6 +22,11 @@ Herlper="*res://Helper.gd"
 GameSave="*res://GameSave.gd"
 GameRessources="*res://GameRessources.gd"
 
+[display]
+
+window/size/mode=3
+window/stretch/mode="viewport"
+
 [input]
 
 ui_cancel={

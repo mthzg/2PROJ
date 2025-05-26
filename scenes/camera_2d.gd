@@ -2,12 +2,12 @@ extends Camera2D
 
 var dragging := false
 var zoom_speed := 0.1
-var min_zoom := 2.8
+var min_zoom := 1
 var max_zoom := 10.0
 
 func _ready():
 	# Set initial zoom on startup
-	zoom = Vector2(4, 4)
+	zoom = Vector2(1.5, 1.5)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 
