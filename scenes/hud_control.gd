@@ -38,7 +38,15 @@ var building_data = {
 		"png":"res://Assets/dirt_road.png", 
 		"size": Vector2i(1,1),
 		"cost": {}
-	}	
+	},
+	5: {
+		"name": "Berry Picker", 
+		"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
+		"png":"res://Assets/berrypicker.png", 
+		"size": Vector2i(2,2),
+		"cost": {"wood": 0}
+	}		
+	
 }
 
 func _ready():

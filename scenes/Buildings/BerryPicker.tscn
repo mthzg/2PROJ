@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce4ffq15htl38"]
+
+[ext_resource type="Texture2D" uid="uid://c85iyuou2e6ap" path="res://Assets/berrypicker.png" id="1_ikoog"]
+
+[node name="BerryPicker" type="Sprite2D"]
+texture = ExtResource("1_ikoog")
+offset = Vector2(8, 8)
