@@ -84,6 +84,8 @@ func _input(event):
 			self.queue_redraw()
 			
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var mouse_pos = get_global_mouse_position()
+		var clicked_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
 		if is_ghost_active and ghost_cell != null:
 			if try_place_building(ghost_cell):
 				#if current_building_data.get("name") != "Dirt road":
@@ -93,6 +95,14 @@ func _input(event):
 				#	current_building_data = null
 				pass
 			self.queue_redraw()
+			if current_building_data != null and current_building_data.get("name") == "Eraser":
+				delete_building_at(clicked_cell)
+				return  # Don't try placement
+
+			if is_ghost_active and ghost_cell != null:
+				if try_place_building(ghost_cell):
+					pass
+				self.queue_redraw()
 
 			
 
@@ -139,6 +149,7 @@ func try_place_building(cell: Vector2i) -> bool:
 	var base_cost = current_building_data.get("cost", {})
 	var cost = base_cost.duplicate(true)  # Deep copy to avoid mutating original data
 
+
 	# Apply "first 5 houses free" rule
 	if current_building_data.get("name") == "Small House" and house_built_count < free_house_limit:
 		cost["wood"] = 0
@@ -165,6 +176,11 @@ func try_place_building(cell: Vector2i) -> bool:
 	print("✅ Placing building at ", cell)
 	place_building(cell, size)
 	return true
+	
+	if current_building_data.get("name") == "Berry Picker":
+		if not has_enough_berry_bushes(cell):
+			print("❌ Not enough berry bushes nearby to place Berry Picker!")
+			return false
 
 
 # Place building by ID, mark cells occupied
@@ -342,6 +358,13 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 					"max_workers": 1,
 					"current_workers": 0
 				}
+				
+			if building_data.get("name") == "Berry Picker":
+				work_spot_cells[occupied_cell] = {
+					"type": "berry",
+					"max_workers": 5,
+					"current_workers": 0
+				}	
 
 	# Apply occupancy if needed
 	var occupancy = building_data.get("occupancy", 0)
@@ -372,14 +395,3 @@ func get_building_data_from_name(name: String) -> Dictionary:
 		}
 	}
 	return all_buildings.get(name, {})
-	
-	
-#func is_valid_berrypicker_position(cell: Vector2i) -> bool:
-#	var nearby_bushes := 0
-#	for x in range(-1, 2):
-#		for y in range(-1, 2):
-#			var check_cell = cell + Vector2i(x, y)
-#			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
-#				nearby_bushes += 1
-#
-#	return nearby_bushes >= 5

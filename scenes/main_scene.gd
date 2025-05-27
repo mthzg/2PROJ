@@ -12,6 +12,8 @@ var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
 var wood: int = 0
+var berry_bushes: Array
+
 
 
 func _ready():
@@ -81,8 +83,6 @@ func spend_wood(amount: int) -> void:
 
 func increment_wood(amount: int):
 	wood += amount
-
-
 
 func increase_max_citizens(amount: int = 1) -> void:
 	max_citizens += amount

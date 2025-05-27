@@ -11,6 +11,10 @@ var building_id = null
 # Building ID to name/scene
 var building_data = {
 	1: {
+		"name": "Eraser", 
+		"png":"res://Assets/eraser.png", 
+	},
+	2: {
 		"name": "Small House", 
 		"scene": preload("res://scenes/Buildings/Small_House.tscn"), 
 		"png":"res://Assets/house.png", 
@@ -18,35 +22,35 @@ var building_data = {
 		"occupancy": 2,
 		"cost": {"wood": 2}  # <--- Added cost here
 	},
-	2: {
+	3: {
 		"name": "Tree", 
 		"scene": preload("res://scenes/Buildings/Tree.tscn"), 
 		"png":"res://Assets/tree.png", 
 		"size": Vector2i(1,1),
 		"cost": {}
 	},
-	3: {
+	4: {
 		"name": "Greatfire", 
 		"scene": preload("res://scenes/Buildings/GreatFire.tscn"), 
 		"png":"res://Assets/greatfire.png", 
 		"size": Vector2i(2,2),
 		"cost": {}
 	},
-	4: {
+	5: {
 		"name": "Dirt road", 
 		"scene": preload("res://scenes/Buildings/dirt_road.tscn"), 
 		"png":"res://Assets/dirt_road.png", 
 		"size": Vector2i(1,1),
 		"cost": {}
 	},
-	5: {
+	6: {
 		"name": "Berry Picker", 
 		"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
 		"png":"res://Assets/berrypicker.png", 
 		"size": Vector2i(2,2),
 		"cost": {"wood": 0}
 	},
-	6: {
+	7: {
 		"name": "Berry Bush", 
 		"scene": preload("res://scenes/Buildings/BerryBush.tscn"), 
 		"png":"res://Assets/berrybush.png", 
@@ -64,8 +68,7 @@ func _ready():
 		item_list.set_item_metadata(idx, id)  # Attach ID to each item
 
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
-
-
+		
 func _on_item_selected(index: int):
 	var building_id = item_list.get_item_metadata(index)
 	var data = building_data[building_id]
