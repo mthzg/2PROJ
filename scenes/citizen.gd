@@ -154,6 +154,7 @@ func start_gathering():
 	is_gathering = false
 	has_gathered_resource = true
 	go_home()
+	
 
 func go_home():
 	if house_position == Vector2i.ZERO:

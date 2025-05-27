@@ -45,6 +45,13 @@ var building_data = {
 		"png":"res://Assets/berrypicker.png", 
 		"size": Vector2i(2,2),
 		"cost": {"wood": 0}
+	},
+	6: {
+		"name": "Berry Bush", 
+		"scene": preload("res://scenes/Buildings/BerryBush.tscn"), 
+		"png":"res://Assets/berrybush.png", 
+		"size": Vector2i(1, 1),
+		"cost": {}
 	}		
 	
 }

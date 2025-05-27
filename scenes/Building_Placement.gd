@@ -172,6 +172,7 @@ func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
 	var occupancy = current_building_data.get("occupancy", 0)
 
+
 	if scene == null:
 		return
 
@@ -299,6 +300,22 @@ func delete_building_at(cell: Vector2i) -> bool:
 	print("⚠ Building data erased but node not found.")
 	return false  # fallback if node not found
 
+func has_enough_berry_bushes(center: Vector2i) -> bool:
+	var count := 0
+	for x in range(-1, 2):
+		for y in range(-1, 2):
+			if x == 0 and y == 0:
+				continue
+			var cell = center + Vector2i(x, y)
+			if occupied_cells.has(cell):
+				var b = occupied_cells[cell]
+				if b.has("type") and b.type == "berry_bush":
+					count += 1
+	if count >= 5:
+		return true
+	return false
+
+
 func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 	var size = building_data.get("size", Vector2i(1, 1))
 	var scene = building_data.get("scene")
@@ -355,3 +372,14 @@ func get_building_data_from_name(name: String) -> Dictionary:
 		}
 	}
 	return all_buildings.get(name, {})
+	
+	
+func is_valid_berrypicker_position(cell: Vector2i) -> bool:
+	var nearby_bushes := 0
+	for x in range(-1, 2):
+		for y in range(-1, 2):
+			var check_cell = cell + Vector2i(x, y)
+			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
+				nearby_bushes += 1
+
+	return nearby_bushes >= 5

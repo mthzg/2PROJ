@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://m8bdpjr38iob"]
+
+[ext_resource type="Texture2D" uid="uid://bk1o4yfs7p0qb" path="res://Assets/berrybush.png" id="1_l87ui"]
+
+[node name="BerryBush" type="Sprite2D"]
+texture = ExtResource("1_l87ui")
+offset = Vector2(8, 8)

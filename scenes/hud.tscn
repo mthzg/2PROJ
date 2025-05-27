@@ -28,9 +28,10 @@ offset_right = 1088.0
 offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 0
-current_tab = 0
+current_tab = 1
 
 [node name="ItemList" type="ItemList" parent="Control/TabContainer"]
+visible = false
 layout_mode = 2
 max_columns = 7
 same_column_width = true
@@ -79,7 +80,6 @@ scale = Vector2(0.35, 0.399999)
 texture = SubResource("CompressedTexture2D_6fi6k")
 
 [node name="TabInfo" type="VBoxContainer" parent="Control/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
