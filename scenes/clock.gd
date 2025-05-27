@@ -85,9 +85,9 @@ func set_speed(new_speed: Speed):
 	# Call setter on all citizens
 	var multiplier = 1.0
 	if wait_time == 0.3:
-		multiplier = 3.33
+		multiplier = 2.5
 	elif wait_time == 0.1:
-		multiplier = 10.0
+		multiplier = 5.0
 
 	if main.has_method("set_speed_multiplier"):
 		main.set_speed_multiplier(multiplier)
