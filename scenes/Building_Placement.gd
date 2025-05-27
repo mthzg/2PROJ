@@ -226,6 +226,13 @@ func place_building(cell: Vector2i, size: Vector2i):
 	# Update max citizens on main game script
 	if occupancy > 0 and main_game != null:
 		main_game.increase_max_citizens(occupancy)
+		
+	if current_building_data.get("name") == "Berry Picker":
+		work_spot_cells[occupied_cells] = {
+			"type": "berry",
+			"max_workers": 5,
+			"current_workers": 0
+		}
 
 func assign_houses_to_citizens():
 	for house in houses:
@@ -338,6 +345,13 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 	if scene == null:
 		print("⚠ Missing scene for", building_data.get("name"))
 		return
+		
+	if current_building_data.get("name") == "Berry Picker":
+		work_spot_cells[occupied_cells] = {
+			"type": "berry",
+			"max_workers": 5,
+			"current_workers": 0
+		}
 
 	var instance = scene.instantiate()
 	var local_pos = ground_layer.map_to_local(cell)
@@ -402,7 +416,7 @@ func is_valid_berrypicker_position(cell: Vector2i) -> bool:
 	for x in range(-1, 2):
 		for y in range(-1, 2):
 			var check_cell = cell + Vector2i(x, y)
-			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
+			if work_spot_cells.has(check_cell) and work_spot_cells[check_cell].name == "BerryBush":
 				nearby_bushes += 1
 
 	return nearby_bushes >= 5
