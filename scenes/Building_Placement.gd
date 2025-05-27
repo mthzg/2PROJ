@@ -30,7 +30,6 @@ var unassigned_citizens = []  # Citizens waiting for house assignment
 
 
 
-
 func spawn_30_trees():
 	var placed = 0
 	var map_bounds = ground_layer.get_used_rect()
@@ -213,6 +212,13 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"max_workers": 1,
 					"current_workers": 0
 				}
+				
+			if current_building_data.get("name") == "Berry Picker":
+				work_spot_cells[occupied_cell] = {
+					"type": "berry",
+					"max_workers": 5,
+					"current_workers": 0
+				}
 	# Track house only once, not for every occupied cell
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
@@ -227,12 +233,7 @@ func place_building(cell: Vector2i, size: Vector2i):
 	if occupancy > 0 and main_game != null:
 		main_game.increase_max_citizens(occupancy)
 		
-	if current_building_data.get("name") == "Berry Picker":
-		work_spot_cells[occupied_cells] = {
-			"type": "berry",
-			"max_workers": 5,
-			"current_workers": 0
-		}
+
 
 func assign_houses_to_citizens():
 	for house in houses:
@@ -411,12 +412,12 @@ func get_building_data_from_name(name: String) -> Dictionary:
 	return all_buildings.get(name, {})
 	
 	
-func is_valid_berrypicker_position(cell: Vector2i) -> bool:
-	var nearby_bushes := 0
-	for x in range(-1, 2):
-		for y in range(-1, 2):
-			var check_cell = cell + Vector2i(x, y)
-			if work_spot_cells.has(check_cell) and work_spot_cells[check_cell].name == "BerryBush":
-				nearby_bushes += 1
-
-	return nearby_bushes >= 5
+#func is_valid_berrypicker_position(cell: Vector2i) -> bool:
+#	var nearby_bushes := 0
+#	for x in range(-1, 2):
+#		for y in range(-1, 2):
+#			var check_cell = cell + Vector2i(x, y)
+#			if work_spot_cells.has(check_cell) and work_spot_cells[check_cell].name == "BerryBush":
+#				nearby_bushes += 1
+#
+#	return nearby_bushes >= 5

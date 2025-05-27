@@ -11,7 +11,7 @@ var minute_counter := 0
 var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
-var wood: int = 0
+var wood: int = 10
 var berry_bushes: Array
 
 
@@ -59,13 +59,17 @@ func _on_time_updated(current_time: String) -> void:
 				citizens.append(new_citizen)
 				total_citizens += 1
 				new_citizen.main_game = self
-				#new_citizen.go_gather("tree")
+				new_citizen.go_gather("tree")
+				#new_citizen.go_gather("berry")
+				
 			print("Total citizens = ", total_citizens)
 			print("Max = ", max_citizens)
 		else:
 			print("Max citizens reached. No new spawn.")
 			
 			
+	
+
 func set_speed_multiplier(multiplier: float) -> void:
 	current_speed_multiplier = multiplier
 	print("setter called value = ", multiplier)

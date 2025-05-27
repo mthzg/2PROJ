@@ -22,6 +22,8 @@ var is_gathering: bool = false
 var is_returning_home: bool = false
 var has_gathered_resource: bool = false
 
+var current_ressource_type_to_gather: String
+
 
 var house_position: Vector2i = Vector2i.ZERO  # default, not null
 
@@ -141,15 +143,12 @@ func go_gather(resource_type: String) -> void:
 	var nearest := Vector2i.ZERO
 	var found := false
 	var min_distance := INF
-
+	print(work_spot_cells)
 	for target_cell in work_spot_cells.keys():
 		var data = work_spot_cells[target_cell]
 
-		if (
-			data.type == resource_type and
-			data.current_workers < data.max_workers and
-			data.get("is_startup", false)
-		):
+		if (data.type == resource_type and data.current_workers < data.max_workers ):
+			print("berry found")
 			var dist = start_cell.distance_to(target_cell)
 			if dist < min_distance:
 				min_distance = dist
@@ -159,6 +158,7 @@ func go_gather(resource_type: String) -> void:
 	if not found:
 		return
 
+	current_ressource_type_to_gather = resource_type
 	work_spot_cells[nearest].current_workers += 1
 	gather_target = nearest
 	path = find_path(start_cell, nearest)
@@ -167,18 +167,18 @@ func go_gather(resource_type: String) -> void:
 	
 func start_gathering():
 	is_gathering = true
-
-	var gather_time = 5.0 / _speed_multiplier
-	await get_tree().create_timer(gather_time).timeout
-
-	# Delete tree at gather_target
-	if terrain_tilemap and terrain_tilemap.has_method("delete_building_at"):
-		terrain_tilemap.delete_building_at(gather_target)
-
-	# Instead of giving wood here, go home first
-	is_gathering = false
-	has_gathered_resource = true
-	go_home()
+	if current_ressource_type_to_gather == "tree":
+		var gather_time = 5.0 / _speed_multiplier
+		await get_tree().create_timer(gather_time).timeout
+	
+		# Delete tree at gather_target
+		if terrain_tilemap and terrain_tilemap.has_method("delete_building_at"):
+			terrain_tilemap.delete_building_at(gather_target)
+	
+		# Instead of giving wood here, go home first
+		is_gathering = false
+		has_gathered_resource = true
+		go_home()
 	
 
 func go_home():
