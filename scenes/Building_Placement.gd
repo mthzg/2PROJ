@@ -374,12 +374,12 @@ func get_building_data_from_name(name: String) -> Dictionary:
 	return all_buildings.get(name, {})
 	
 	
-func is_valid_berrypicker_position(cell: Vector2i) -> bool:
-	var nearby_bushes := 0
-	for x in range(-1, 2):
-		for y in range(-1, 2):
-			var check_cell = cell + Vector2i(x, y)
-			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
-				nearby_bushes += 1
-
-	return nearby_bushes >= 5
+#func is_valid_berrypicker_position(cell: Vector2i) -> bool:
+#	var nearby_bushes := 0
+#	for x in range(-1, 2):
+#		for y in range(-1, 2):
+#			var check_cell = cell + Vector2i(x, y)
+#			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
+#				nearby_bushes += 1
+#
+#	return nearby_bushes >= 5
