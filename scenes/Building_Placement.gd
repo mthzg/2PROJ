@@ -139,6 +139,7 @@ func try_place_building(cell: Vector2i) -> bool:
 	var base_cost = current_building_data.get("cost", {})
 	var cost = base_cost.duplicate(true)  # Deep copy to avoid mutating original data
 
+
 	# Apply "first 5 houses free" rule
 	if current_building_data.get("name") == "Small House" and house_built_count < free_house_limit:
 		cost["wood"] = 0
@@ -374,12 +375,3 @@ func get_building_data_from_name(name: String) -> Dictionary:
 	return all_buildings.get(name, {})
 	
 	
-func is_valid_berrypicker_position(cell: Vector2i) -> bool:
-	var nearby_bushes := 0
-	for x in range(-1, 2):
-		for y in range(-1, 2):
-			var check_cell = cell + Vector2i(x, y)
-			if buildings.has(check_cell) and buildings[check_cell].name == "BerryBush":
-				nearby_bushes += 1
-
-	return nearby_bushes >= 5

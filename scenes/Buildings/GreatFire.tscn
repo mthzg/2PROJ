@@ -1,9 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://deqsdqeb6bvq0"]
 
-[ext_resource type="Texture2D" uid="uid://dlho0eesflef0" path="res://Assets/greatfire.png" id="1_mcwj4"]
+[ext_resource type="Texture2D" uid="uid://dy5rj7wxs08n1" path="res://Assets/greatfire.png" id="1_mcwj4"]
 
 [node name="GreatFire" type="Sprite2D"]
-position = Vector2(-4, -6)
-scale = Vector2(0.356531, 0.414286)
 texture = ExtResource("1_mcwj4")
-offset = Vector2(16, 7)
+offset = Vector2(8, 8)
