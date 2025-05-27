@@ -9,7 +9,7 @@ var current_speed_multiplier: float = 1.0
 
 var minute_counter := 0
 var total_citizens: int = 0
-var max_citizens: int = 15
+var max_citizens: int 
 var citizens := []
 var wood: int = 0
 
@@ -24,7 +24,7 @@ func _ready():
 		total_citizens += 1
 		citizens.append(new_citizen)
 		new_citizen.main_game = self
-		new_citizen.go_gather("tree")
+		#new_citizen.go_gather("tree")
 		
 
 	if clock.has_signal("time_updated"):
@@ -42,6 +42,7 @@ func _on_time_updated(current_time: String) -> void:
 			continue
 		c.time_to_live -= 1
 		if c.time_to_live <= 0:
+			c.cleanup_before_removal()
 			c.queue_free()
 			citizens.remove_at(i)
 			total_citizens -= 1
@@ -56,7 +57,7 @@ func _on_time_updated(current_time: String) -> void:
 				citizens.append(new_citizen)
 				total_citizens += 1
 				new_citizen.main_game = self
-				new_citizen.go_gather("tree")
+				#new_citizen.go_gather("tree")
 			print("Total citizens = ", total_citizens)
 			print("Max = ", max_citizens)
 		else:
@@ -80,7 +81,6 @@ func spend_wood(amount: int) -> void:
 
 func increment_wood(amount: int):
 	wood += amount
-	print("🌳 Total wood in main script: ", wood)
 
 
 

@@ -28,10 +28,35 @@ var house_position: Vector2i = Vector2i.ZERO  # default, not null
 func assign_house(house_pos: Vector2i):
 	house_position = house_pos
 	print("Citizen assigned to house at: ", house_pos)
-
+	go_home()
 	# If not already working or returning home, start gathering
-	if not is_gathering and not is_returning_home and !has_gathered_resource:
-		go_gather("tree")
+	#if not is_gathering and not is_returning_home and !has_gathered_resource:
+	#	go_gather("tree")
+
+func cleanup_before_removal():
+	if house_position == Vector2i.ZERO:
+		return
+
+	for house in terrain_tilemap.houses:
+		if house.has("position") and house["position"] == house_position:
+			if house.has("assigned_citizens"):
+				var original_count = house["assigned_citizens"].size()
+				house["assigned_citizens"] = house["assigned_citizens"].filter(func(c): return c != self)
+				var new_count = house["assigned_citizens"].size()
+
+				if original_count != new_count:
+					print("Citizen removed from house at", house_position)
+				else:
+					print("Citizen not found in house at", house_position)
+			break
+
+	house_position = Vector2i.ZERO
+
+	if terrain_tilemap and terrain_tilemap.has_method("assign_houses_to_citizens"):
+		terrain_tilemap.assign_houses_to_citizens()
+
+
+
 
 
 # Getter function to access the private variable
@@ -75,8 +100,8 @@ func get_movement_direction() -> Vector2:
 						if main_game and main_game.has_method("increment_wood"):
 							main_game.increment_wood(1)
 
-					# Start another task if needed
-					go_gather("tree")
+					## Start another task if needed
+					#go_gather("tree")
 
 				elif not is_gathering:
 					start_gathering()
