@@ -1,5 +1,6 @@
-res://scenes/Citizen.tscn
 res://scenes/hud.tscn
+res://scenes/hud_control.gd
+res://scenes/Citizen.tscn
 res://scenes/time_control.tscn
 res://scenes/clock.tscn
 res://scenes/main_scene.tscn
@@ -8,8 +9,6 @@ res://scenes/menus.tscn
 res://scenes/Buildings/BerryPicker.tscn
 res://scenes/Buildings/BerryBush.tscn
 res://scenes/Buildings/Tree.tscn
-res://scenes/hud_control.gd
 res://scenes/Buildings/WoodCutter.tscn
 res://scenes/Buildings/WaterWorkersHut.tscn
-res://scenes/Building_Placement.gd
-res://GameSave.gd
+res://scenes/WorkRow.tscn

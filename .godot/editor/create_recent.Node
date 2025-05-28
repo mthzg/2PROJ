@@ -1,10 +1,11 @@
+SpinBox
+Label
+HBoxContainer
 Sprite2D
 Button
-Label
 VBoxContainer
 TabContainer
 RichTextLabel
 ColorRect
-HBoxContainer
 CanvasLayer
 Panel

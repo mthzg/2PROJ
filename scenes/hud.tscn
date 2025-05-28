@@ -28,9 +28,10 @@ offset_right = 1088.0
 offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 0
-current_tab = 0
+current_tab = 2
 
 [node name="ItemList" type="ItemList" parent="Control/TabContainer"]
+visible = false
 layout_mode = 2
 max_columns = 7
 same_column_width = true
@@ -93,18 +94,35 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="TabWork" type="VBoxContainer" parent="Control/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
 [node name="Label" type="Label" parent="Control/TabContainer/TabWork"]
 layout_mode = 2
 
+[node name="SpinBox" type="SpinBox" parent="Control/TabContainer/TabWork/Label"]
+layout_mode = 2
+offset_top = 66.0
+offset_right = 1024.0
+offset_bottom = 97.0
+
 [node name="Label2" type="Label" parent="Control/TabContainer/TabWork"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Control/TabContainer/TabWork"]
+[node name="SpinBox2" type="SpinBox" parent="Control/TabContainer/TabWork/Label2"]
 layout_mode = 2
+offset_top = 39.0
+offset_right = 1024.0
+offset_bottom = 70.0
+
+[node name="Label3" type="Label" parent="Control/TabContainer/TabWork"]
+layout_mode = 2
+
+[node name="SpinBox3" type="SpinBox" parent="Control/TabContainer/TabWork/Label3"]
+layout_mode = 2
+offset_top = -35.0
+offset_right = 1024.0
+offset_bottom = -4.0
 
 [node name="TabResearch" type="VBoxContainer" parent="Control/TabContainer"]
 visible = false

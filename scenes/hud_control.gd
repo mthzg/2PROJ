@@ -5,11 +5,17 @@ extends Control
 @onready var wood_label = $TabContainer/TabInfo/WoodLabel
 @onready var pop_label = $TabContainer/TabInfo/PopulationLabel
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
+@onready var tab_work = $TabContainer/TabWork
 
-var main_scene  # This will hold the reference to main_scene
+var workplace_spinboxes = {}
+var last_spinbox_values = {}
+var check_timer := 0.0
+const CHECK_INTERVAL := 5.0
+var main_scene  
 var building_id = null
-# Building ID to name/scene
 var building_data = {
+	
+
 	1: {
 		"name": "Eraser", 
 		"png":"res://Assets/eraser.png", 
@@ -81,8 +87,11 @@ func _ready():
 		var texture = load(data["png"])  # Load the PNG as a Texture2D
 		var idx = item_list.add_icon_item(texture)  # Use icon only
 		item_list.set_item_metadata(idx, id)  # Attach ID to each item
-
+		update_work_tab(get_mock_workplaces())
+		
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
+
+
 		
 func _on_item_selected(index: int):
 	var building_id = item_list.get_item_metadata(index)
@@ -109,14 +118,38 @@ func _process(delta):
 		var total_slots = 10  # <- you’ll want to replace this with actual housing slot logic
 
 		update_info_tab(wood, total_citizens, occupied, total_slots)
-	
-#func update_work_tab(workplaces: Array):
-#	var tab = $TabContainer/TabWork
-#	tab.clear_children()
-#
-#	for work_data in workplaces:
-#		var row = preload("res://ui/WorkRow.tscn").instantiate()
-#		row.get_node("Label").text = work_data.name
-#		row.get_node("WorkerCount").text = "%d / %d" % [work_data.current, work_data.max]
-#		row.get_node("Button").pressed.connect(func(): assign_worker_to(work_data))
-#		tab.add_child(row)
+
+func get_mock_workplaces():
+	# Simule trois ateliers pour tester l’affichage
+	return [
+		{ "id": 1, "name": "Berry Picker", "current": 0, "max": 4 },
+		{ "id": 2, "name": "Wood Cutter", "current": 0, "max": 4 },
+		{ "id": 3, "name": "Water Workers Hut", "current": 0, "max": 4 }
+	]
+
+
+func update_work_tab(workplaces):
+	for child in tab_work.get_children():
+		tab_work.remove_child(child)
+		child.queue_free()
+	workplace_spinboxes.clear()
+	last_spinbox_values.clear()
+
+	for work_data in workplaces:
+		var row = preload("res://scenes/WorkRow.tscn").instantiate()
+		row.get_node("Label").text = work_data.name
+		row.get_node("WorkerCount").text = "%d / %d" % [work_data.current, work_data.max]
+
+		var spinbox = row.get_node("MaxWorker")
+		spinbox.min_value = 0
+		spinbox.max_value = work_data.max
+		spinbox.value = work_data.max  # Valeur initiale = max
+		workplace_spinboxes[work_data.id] = spinbox
+		last_spinbox_values[work_data.id] = spinbox.value
+
+		tab_work.add_child(row)
+		
+func assign_workers_to_workplace(id, new_max):
+	# Ici, envoie les workers vers le bon atelier
+	# Adapte selon ta logique, par exemple :
+	main_scene.set_max_workers_for_workplace(id, new_max)
