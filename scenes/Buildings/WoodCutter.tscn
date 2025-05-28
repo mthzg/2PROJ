@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqsjn86m8agpd"]
+
+[ext_resource type="Texture2D" uid="uid://dkbx04yrnoj7m" path="res://Assets/WoodCutter.png" id="1_obnxk"]
+
+[node name="WoodCutter" type="Sprite2D"]
+texture = ExtResource("1_obnxk")
+offset = Vector2(8, 8)

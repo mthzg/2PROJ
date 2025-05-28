@@ -48,7 +48,7 @@ var building_data = {
 		"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
 		"png":"res://Assets/berrypicker.png", 
 		"size": Vector2i(2,2),
-		"cost": {"wood": 0}
+		"cost": {"wood": 15}
 	},
 	7: {
 		"name": "Berry Bush", 
@@ -56,7 +56,22 @@ var building_data = {
 		"png":"res://Assets/berrybush.png", 
 		"size": Vector2i(1, 1),
 		"cost": {}
-	}		
+	},
+	8: {
+		"name": "Wood Cutter", 
+		"scene": preload("res://scenes/Buildings/WoodCutter.tscn"), 
+		"png":"res://Assets/WoodCutter.png", 
+		"size": Vector2i(2, 2),
+		"cost": {}
+	},
+	9: {
+		"name": "Water Workers Hut", 
+		"scene": preload("res://scenes/Buildings/WaterWorkersHut.tscn"), 
+		"png":"res://Assets/waterworkershut.png", 
+		"size": Vector2i(2, 2),
+		"cost": {"wood": 10}
+	},
+			
 	
 }
 

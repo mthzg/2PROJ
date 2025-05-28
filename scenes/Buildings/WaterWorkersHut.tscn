@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhr4h3h63ta3t"]
+
+[ext_resource type="Texture2D" uid="uid://1xp53s4h80ve" path="res://Assets/waterworkershut.png" id="1_85lvi"]
+
+[node name="WaterWorkersHut" type="Sprite2D"]
+texture = ExtResource("1_85lvi")
+offset = Vector2(8, 8)
