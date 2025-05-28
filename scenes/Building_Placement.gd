@@ -71,6 +71,7 @@ func spawn_30_trees():
 # Call this in _ready
 func _ready():
 	spawn_30_trees()
+	
 
 
 func _input(event):
@@ -347,12 +348,12 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 		print("⚠ Missing scene for", building_data.get("name"))
 		return
 		
-	if current_building_data.get("name") == "Berry Picker":
-		work_spot_cells[occupied_cells] = {
-			"type": "berry",
-			"max_workers": 5,
-			"current_workers": 0
-		}
+	#if current_building_data.get("name") == "Berry Picker":
+	#	work_spot_cells[occupied_cells] = {
+	#		"type": "berry",
+	#		"max_workers": 5,
+	#		"current_workers": 0
+	#	}
 
 	var instance = scene.instantiate()
 	var local_pos = ground_layer.map_to_local(cell)
@@ -389,12 +390,12 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 			
 func get_building_data_from_name(name: String) -> Dictionary:
 	var all_buildings = {
-		"House": {
-			"name": "House",
+		"Small House": {
+			"name": "Small House",
 			"scene": preload("res://scenes/Buildings/Small_House.tscn"),
 			"size": Vector2i(2, 2),
 			"cost": {"wood": 10},
-			"occupancy": 3
+			"occupancy": 2
 		},
 		"Dirt road": {
 			"name": "Dirt road",

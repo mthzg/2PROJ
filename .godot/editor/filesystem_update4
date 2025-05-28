@@ -11,3 +11,5 @@ res://scenes/Buildings/Tree.tscn
 res://scenes/hud_control.gd
 res://scenes/Buildings/WoodCutter.tscn
 res://scenes/Buildings/WaterWorkersHut.tscn
+res://scenes/Building_Placement.gd
+res://GameSave.gd
