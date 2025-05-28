@@ -131,6 +131,16 @@ func is_over_water(cell: Vector2i) -> bool:
 	var water_tile = water_layer.get_cell_source_id(cell)
 	return water_tile != -1 or (ground_tile == -1 and rocks_tile == -1)
 
+func stop_gathering():
+	if gather_target != Vector2i.ZERO and gather_target in work_spot_cells:
+		work_spot_cells[gather_target].current_workers -= 1
+	gather_target = Vector2i.ZERO
+	is_gathering = false
+	path.clear()
+	path_index = 0
+	go_home()
+
+
 func go_gather(resource_type: String) -> void:
 	
 	if house_position == Vector2i.ZERO:
@@ -143,12 +153,10 @@ func go_gather(resource_type: String) -> void:
 	var nearest := Vector2i.ZERO
 	var found := false
 	var min_distance := INF
-	print(work_spot_cells)
 	for target_cell in work_spot_cells.keys():
 		var data = work_spot_cells[target_cell]
 
 		if (data.type == resource_type and data.current_workers < data.max_workers ):
-			print("berry found")
 			var dist = start_cell.distance_to(target_cell)
 			if dist < min_distance:
 				min_distance = dist
@@ -179,7 +187,6 @@ func start_gathering():
 		is_gathering = false
 		has_gathered_resource = true
 		go_home()
-	
 
 func go_home():
 	if house_position == Vector2i.ZERO:

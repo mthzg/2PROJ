@@ -11,9 +11,13 @@ var minute_counter := 0
 var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
-var wood: int = 10
+var wood: int = 100
 var berry_bushes: Array
 
+var current_tree_workers: int = 0
+var desired_tree_workers: int = 0
+var current_berry_workers: int = 0
+var desired_berry_workers: int = 0
 
 
 func _ready():
@@ -34,7 +38,23 @@ func _ready():
 
 func _on_time_updated(current_time: String) -> void:
 	minute_counter += 1
-
+	
+	
+	if current_berry_workers > desired_berry_workers:
+		var to_remove = current_berry_workers - desired_berry_workers
+		remove_citizens_from_gathering("berry", to_remove)
+	elif current_berry_workers < desired_berry_workers:
+		var to_add = desired_berry_workers - current_berry_workers
+		assign_citizens_to_gather("berry", to_add)
+		
+	if current_tree_workers > desired_tree_workers:
+		var to_remove = current_tree_workers - desired_tree_workers
+		remove_citizens_from_gathering("tree", to_remove)
+	elif current_tree_workers < desired_tree_workers:
+		var to_add = desired_tree_workers - current_tree_workers
+		assign_citizens_to_gather("tree", to_add)
+		
+		
 	# Manage citizens time_to_live:
 	for i in range(citizens.size() - 1, -1, -1):
 		var c = citizens[i]
@@ -53,13 +73,15 @@ func _on_time_updated(current_time: String) -> void:
 	# Spawn new citizens every 60 minutes (if under max)
 	if minute_counter >= 20:
 		minute_counter = 0
+		set_desired_berry_workers(3)
+		set_desired_tree_workers(3)
 		if total_citizens < max_citizens:
 			var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 			if new_citizen:
 				citizens.append(new_citizen)
 				total_citizens += 1
 				new_citizen.main_game = self
-				new_citizen.go_gather("tree")
+				#new_citizen.go_gather("tree")
 				#new_citizen.go_gather("berry")
 				
 			print("Total citizens = ", total_citizens)
@@ -68,7 +90,57 @@ func _on_time_updated(current_time: String) -> void:
 			print("Max citizens reached. No new spawn.")
 			
 			
+func remove_citizens_from_gathering(resource_type: String, max_to_remove: int) -> void:
+	var removed = 0
+	for c in citizens:
+		if removed >= max_to_remove:
+			break
+		if not is_instance_valid(c):
+			continue
+		if c.is_gathering and c.current_ressource_type_to_gather == resource_type:
+			c.stop_gathering()
+			removed += 1
+			if resource_type == "berry":
+				current_berry_workers -= 1
+			elif resource_type == "tree":
+				current_tree_workers -= 1
+
+	print("Removed %d citizens from gathering %s" % [removed, resource_type])
+
+func set_desired_berry_workers(value: int):
+	desired_berry_workers = value
+
+func set_desired_tree_workers(value: int):
+	desired_tree_workers = value
+
 	
+func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> void:
+	var assigned = 0
+	for c in citizens:
+		if assigned >= max_to_assign:
+			break
+		if not is_instance_valid(c):
+			continue
+		# Check if citizen is idle (you can define this flag in your citizen)
+		if c.is_gathering or c.is_returning_home or c.has_gathered_resource:
+			continue
+		
+		# Check if there is at least one work spot with free space for resource_type
+		var can_assign = false
+		for spot_cell in c.work_spot_cells.keys():
+			var spot = c.work_spot_cells[spot_cell]
+			if spot.type == resource_type and spot.current_workers < spot.max_workers:
+				can_assign = true
+				break
+		
+		if can_assign:
+			c.go_gather(resource_type)
+			assigned += 1
+			if resource_type == "berry":
+				current_berry_workers += 1
+			elif resource_type == "tree":
+				set_desired_tree_workers(desired_tree_workers - 1)
+
 
 func set_speed_multiplier(multiplier: float) -> void:
 	current_speed_multiplier = multiplier

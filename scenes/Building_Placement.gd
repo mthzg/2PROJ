@@ -215,11 +215,12 @@ func place_building(cell: Vector2i, size: Vector2i):
 				}
 				
 			if current_building_data.get("name") == "Berry Picker":
-				work_spot_cells[occupied_cell] = {
-					"type": "berry",
-					"max_workers": 5,
-					"current_workers": 0
-				}
+				if x == 0 and y == 0:  # only one cell gets the work spot
+					work_spot_cells[occupied_cell] = {
+						"type": "berry",
+						"max_workers": 5,
+						"current_workers": 0
+					}
 	# Track house only once, not for every occupied cell
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
