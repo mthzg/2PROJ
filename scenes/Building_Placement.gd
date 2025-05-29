@@ -29,6 +29,20 @@ var unassigned_citizens = []  # Citizens waiting for house assignment
 
 
 
+func get_worker_stats_for(resource_type: String) -> Dictionary:
+	var total_max = 0
+	var total_current = 0
+	for spot_cell in work_spot_cells.keys():
+		var spot = work_spot_cells[spot_cell]
+		if spot.type == resource_type:
+			total_max += spot.max_workers
+			total_current += spot.current_workers
+	var temp = {
+		"total_max": total_max,
+		"current": total_current
+	}
+	print(temp)
+	return temp
 
 func spawn_30_trees():
 	var placed = 0

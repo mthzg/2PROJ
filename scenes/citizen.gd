@@ -24,6 +24,10 @@ var has_gathered_resource: bool = false
 
 var current_ressource_type_to_gather: String
 
+var work_hours_elapsed: int = 0
+var is_sleeping: bool = false
+var sleep_timer: int = 0
+var previous_resource_type: String = ""
 
 var house_position: Vector2i = Vector2i.ZERO  # default, not null
 

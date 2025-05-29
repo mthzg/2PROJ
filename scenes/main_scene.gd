@@ -36,24 +36,30 @@ func _ready():
 	if clock.has_signal("time_updated"):
 		clock.connect("time_updated", Callable(self, "_on_time_updated"))
 
+func get_current_ressource_worker(type: String):
+	if type == "tree":
+		return current_tree_workers
+	elif type == "beryy":
+		return current_berry_workers
+
 func _on_time_updated(current_time: String) -> void:
 	minute_counter += 1
 	
 	
-	if current_berry_workers > desired_berry_workers:
-		var to_remove = current_berry_workers - desired_berry_workers
-		remove_citizens_from_gathering("berry", to_remove)
-	elif current_berry_workers < desired_berry_workers:
-		var to_add = desired_berry_workers - current_berry_workers
-		assign_citizens_to_gather("berry", to_add)
+	
+	var delta_berry = desired_berry_workers - current_berry_workers
+	if delta_berry > 0:
+		assign_citizens_to_gather("berry", delta_berry)
+	elif delta_berry < 0:
+		remove_citizens_from_gathering("berry", -delta_berry)
+
 		
-	if current_tree_workers > desired_tree_workers:
-		var to_remove = current_tree_workers - desired_tree_workers
-		remove_citizens_from_gathering("tree", to_remove)
-	elif current_tree_workers < desired_tree_workers:
-		var to_add = desired_tree_workers - current_tree_workers
-		assign_citizens_to_gather("tree", to_add)
-		
+	var delta_tree = desired_tree_workers - current_tree_workers
+	if delta_tree > 0:
+		assign_citizens_to_gather("tree", delta_tree)
+	elif delta_tree < 0:
+		remove_citizens_from_gathering("tree", -delta_tree)
+
 		
 	# Manage citizens time_to_live:
 	for i in range(citizens.size() - 1, -1, -1):
@@ -64,17 +70,27 @@ func _on_time_updated(current_time: String) -> void:
 			continue
 		c.time_to_live -= 1
 		if c.time_to_live <= 0:
+			# If gathering, remove from their workplace counts
+			if c.is_gathering:
+				var res_type = c.current_ressource_type_to_gather
+				c.stop_gathering()
+				if res_type == "tree":
+					current_tree_workers = max(0, current_tree_workers - 1)
+				elif res_type == "berry":
+					current_berry_workers = max(0, current_berry_workers - 1)
+			
 			c.cleanup_before_removal()
 			c.queue_free()
 			citizens.remove_at(i)
 			total_citizens -= 1
 			print("Citizen removed due to expired time_to_live")
 
+
 	# Spawn new citizens every 60 minutes (if under max)
 	if minute_counter >= 20:
 		minute_counter = 0
-		set_desired_berry_workers(3)
-		set_desired_tree_workers(3)
+		#set_desired_berry_workers(3)
+		#set_desired_tree_workers(3)
 		if total_citizens < max_citizens:
 			var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 			if new_citizen:
@@ -89,7 +105,48 @@ func _on_time_updated(current_time: String) -> void:
 		else:
 			print("Max citizens reached. No new spawn.")
 			
+	#check_sleep_cycle()
+	#hud_control.update_work_tab(hud_control.get_real_workplaces())
+
+
 			
+func check_sleep_cycle():
+	for c in citizens:
+		if not is_instance_valid(c):
+			continue
+
+		# Citizen is sleeping
+		if c.is_sleeping:
+			c.sleep_timer += 1
+			if c.sleep_timer >= 5:  # 5 in-game hours
+				c.is_sleeping = false
+				c.sleep_timer = 0
+				#print("Citizen waking up and resuming", c.previous_resource_type)
+
+				#if c.previous_resource_type != "":
+				#	c.go_gather(c.previous_resource_type)
+				#	if c.previous_resource_type == "tree":
+				#		current_tree_workers += 1
+				#	elif c.previous_resource_type == "berry":
+				#		current_berry_workers += 1
+				#c.previous_resource_type = ""
+
+		# Citizen is working
+		elif c.is_gathering:
+			c.work_hours_elapsed += 1
+			if c.work_hours_elapsed >= 20:  # 19 in-game hours
+				c.work_hours_elapsed = 0
+				c.previous_resource_type = c.current_ressource_type_to_gather
+				c.stop_gathering()
+				if c.previous_resource_type == "tree":
+					current_tree_workers = max(0, current_tree_workers - 1)
+				elif c.previous_resource_type == "berry":
+					current_berry_workers = max(0, current_berry_workers - 1)
+				c.is_sleeping = true
+				print("Citizen is going to sleep after 19h of work.")
+
+
+	
 func remove_citizens_from_gathering(resource_type: String, max_to_remove: int) -> void:
 	var removed = 0
 	for c in citizens:
@@ -134,6 +191,7 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 				break
 		
 		if can_assign:
+			print("citizen going to work = ", resource_type)
 			c.go_gather(resource_type)
 			assigned += 1
 			if resource_type == "berry":

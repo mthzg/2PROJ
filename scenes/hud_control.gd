@@ -7,6 +7,9 @@ extends Control
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
 @onready var tab_work = $TabContainer/TabWork
 
+var spinbox_timers = {}
+const DEBOUNCE_DELAY := 0.5
+
 var workplace_spinboxes = {}
 var last_spinbox_values = {}
 var check_timer := 0.0
@@ -14,8 +17,6 @@ const CHECK_INTERVAL := 5.0
 var main_scene  
 var building_id = null
 var building_data = {
-	
-
 	1: {
 		"name": "Eraser", 
 		"png":"res://Assets/eraser.png", 
@@ -77,8 +78,6 @@ var building_data = {
 		"size": Vector2i(2, 2),
 		"cost": {"wood": 10}
 	},
-			
-	
 }
 
 func _ready():
@@ -87,7 +86,7 @@ func _ready():
 		var texture = load(data["png"])  # Load the PNG as a Texture2D
 		var idx = item_list.add_icon_item(texture)  # Use icon only
 		item_list.set_item_metadata(idx, id)  # Attach ID to each item
-		update_work_tab(get_mock_workplaces())
+		update_work_tab(get_real_workplaces())
 		
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
 
@@ -109,23 +108,44 @@ func update_info_tab(wood: int, total_citizens: int, occupied_slots: int, total_
 	house_label.text = "Houses full: %d / %d" % [occupied_slots, total_slots]
 	
 func _process(delta):
-	if main_scene:
-		var wood = main_scene.wood
-		var total_citizens = main_scene.total_citizens
-		
-		# You’ll want to calculate these housing values dynamically too:
-		var occupied = main_scene.total_citizens  # for now: one citizen = one slot used
-		var total_slots = 10  # <- you’ll want to replace this with actual housing slot logic
+	if not main_scene:
+		return
 
-		update_info_tab(wood, total_citizens, occupied, total_slots)
+	check_timer += delta
+	if check_timer >= CHECK_INTERVAL:
+		check_timer = 0.0
+		update_work_tab(get_real_workplaces())
 
-func get_mock_workplaces():
-	# Simule trois ateliers pour tester l’affichage
-	return [
-		{ "id": 1, "name": "Berry Picker", "current": 0, "max": 4 },
-		{ "id": 2, "name": "Wood Cutter", "current": 0, "max": 4 },
-		{ "id": 3, "name": "Water Workers Hut", "current": 0, "max": 4 }
-	]
+	var wood = main_scene.wood
+	var total_citizens = main_scene.total_citizens
+	var occupied = total_citizens
+	var total_slots = main_scene.max_citizens
+	update_info_tab(wood, total_citizens, occupied, total_slots)
+
+func get_real_workplaces() -> Array:
+	if not main_scene:
+		return []
+
+	var result = []
+	
+	var workplace_types = {
+		1: {"name": "Berry Picker", "type": "berry"},
+		2: {"name": "Wood Cutter", "type": "tree"},
+		3: {"name": "Water Workers Hut", "type": "water"}  # Only if applicable
+	}
+
+	for id in workplace_types.keys():
+		var data = workplace_types[id]
+		var stats = terrain_node.get_worker_stats_for(data.type)
+		result.append({
+			"id": id,
+			"name": data.name,
+			"current": stats.current,
+			"max": stats.total_max
+		})
+
+	return result
+
 
 
 func update_work_tab(workplaces):
@@ -143,13 +163,62 @@ func update_work_tab(workplaces):
 		var spinbox = row.get_node("MaxWorker")
 		spinbox.min_value = 0
 		spinbox.max_value = work_data.max
-		spinbox.value = work_data.max  # Valeur initiale = max
+		spinbox.value = work_data.current
+		spinbox.connect("value_changed", Callable(self, "_on_spinbox_value_changed").bind(work_data.id))
+
 		workplace_spinboxes[work_data.id] = spinbox
 		last_spinbox_values[work_data.id] = spinbox.value
 
 		tab_work.add_child(row)
 		
-func assign_workers_to_workplace(id, new_max):
-	# Ici, envoie les workers vers le bon atelier
-	# Adapte selon ta logique, par exemple :
-	main_scene.set_max_workers_for_workplace(id, new_max)
+		
+func _on_spinbox_value_changed(value: float, id: int):
+	var int_value = int(value)
+
+	if last_spinbox_values.has(id) and last_spinbox_values[id] == int_value:
+		return  # Value hasn't changed
+
+	last_spinbox_values[id] = int_value
+
+	# Cancel any existing timer for this ID
+	if spinbox_timers.has(id):
+		spinbox_timers[id].queue_free()
+		spinbox_timers.erase(id)
+
+	# Create a new Timer node
+	var timer := Timer.new()
+	timer.wait_time = DEBOUNCE_DELAY
+	timer.one_shot = true
+	timer.autostart = true
+	add_child(timer)
+
+	# Bind timer's timeout to assign after delay
+	timer.connect("timeout", Callable(self, "_on_spinbox_delay_timeout").bind(id, int_value))
+
+	# Store it so we can cancel later
+	spinbox_timers[id] = timer
+
+func _on_spinbox_delay_timeout(id: int, value: int):
+	assign_workers_to_workplace(id, value)
+
+	# Clean up timer
+	if spinbox_timers.has(id):
+		spinbox_timers[id].queue_free()
+		spinbox_timers.erase(id)
+
+
+func assign_workers_to_workplace(id: int, new_max: int):
+	var workplace_types = {
+		1: "berry",
+		2: "tree",
+		3: "water"
+	}
+
+	if not workplace_types.has(id):
+		return
+	
+	var resource_type = workplace_types[id]
+	if resource_type == "tree":
+		main_scene.set_desired_tree_workers(new_max)
+	elif resource_type == "berry":
+		main_scene.set_desired_berry_workers(new_max)
