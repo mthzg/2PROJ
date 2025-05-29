@@ -17,12 +17,24 @@ func Save():
 	}
 	var buildings_node = get_tree().root.get_node("Node2D/Terrain")
 	if buildings_node:
+		var already_saved = {}
 		for cell in buildings_node.occupied_cells.keys():
 			var name = buildings_node.occupied_cells[cell]
-			save_data["buildings"].append({
-				"name": name,
-				"cell": cell
-			})
+			var building_data = buildings_node.get_building_data_from_name(name)
+			if building_data:
+				var size = building_data.get("size", Vector2i(1, 1))
+				var is_origin = true
+				for dx in range(size.x):
+					for dy in range(size.y):
+						var candidate = cell - Vector2i(dx, dy)
+						if (dx > 0 or dy > 0) and buildings_node.occupied_cells.get(candidate, "") == name:
+							is_origin = false
+				if is_origin and not already_saved.has(cell):
+					save_data["buildings"].append({
+						"type": name,  # or "name"
+						"cell": cell
+					})
+					already_saved[cell] = true
 
 	var file = FileAccess.open(SaveFilePath, FileAccess.WRITE)
 	file.store_var(save_data)
@@ -43,13 +55,12 @@ func Load():
 	if buildings_node:
 		buildings_node.clear_buildings()  # Remove current buildings
 
-		for building in save_data.get("buildings", []):
-			var name = building.get("name")
-			var cell = building.get("cell")
-			# Get full data for this building
-			var building_data = buildings_node.get_building_data_from_name(name)
-			if building_data:
-				buildings_node.place_building_direct(cell, building_data)
+	for building in save_data.get("buildings", []):
+		var name = building.get("type")  # not "name" if you changed key above!
+		var cell = building.get("cell")
+		var building_data = buildings_node.get_building_data_from_name(name)
+		if building_data:
+			buildings_node.place_building_direct(cell, building_data)
 	
 	print("Game loaded.")
 

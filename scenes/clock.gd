@@ -18,17 +18,12 @@ var timer := Timer.new()
 
 func _ready():
 	print ("clock citizen node = ",main)
-	#GameClock.time_updated.connect(_update_ui)
-	#_update_ui(GameClock.get_time_string())
-	# Setup timer
 	timer.one_shot = false
 	timer.wait_time = 1.0
 	timer.timeout.connect(_on_timer_timeout)
 	add_child(timer)
 	timer.start()
-	
-	# Initialize UI with current time string
-	_update_ui(get_time_string())
+	_update_ui(get_full_datetime_string())
 
 func get_time_string() -> String:
 	return "%02d:%02d" % [hour, minute]
@@ -55,7 +50,7 @@ func _on_timer_timeout():
 		year += 1
 
 	_emit_time()
-	_update_ui(get_time_string())
+	_update_ui(get_full_datetime_string())
 
 func _emit_time():
 	var time_string := get_full_datetime_string()
@@ -91,9 +86,6 @@ func set_speed(new_speed: Speed):
 
 	if main.has_method("set_speed_multiplier"):
 		main.set_speed_multiplier(multiplier)
-	
-	
-	
 
 func pause(): set_speed(Speed.PAUSE)
 func play(): set_speed(Speed.PLAY)

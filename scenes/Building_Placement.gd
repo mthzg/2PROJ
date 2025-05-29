@@ -78,7 +78,7 @@ func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if is_ghost_active:
 			print("cancel placement")
-			is_ghost_active = false
+			is_ghost_active = false	
 			ghost_cell = null
 			current_building_data = null
 			self.queue_redraw()
@@ -343,18 +343,12 @@ func has_enough_berry_bushes(center: Vector2i) -> bool:
 
 
 func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
+	print("Placing building", building_data.get("name"), "at", cell)
 	var size = building_data.get("size", Vector2i(1, 1))
 	var scene = building_data.get("scene")
 	if scene == null:
 		print("⚠ Missing scene for", building_data.get("name"))
 		return
-		
-	#if current_building_data.get("name") == "Berry Picker":
-	#	work_spot_cells[occupied_cells] = {
-	#		"type": "berry",
-	#		"max_workers": 5,
-	#		"current_workers": 0
-	#	}
 
 	var instance = scene.instantiate()
 	var local_pos = ground_layer.map_to_local(cell)
