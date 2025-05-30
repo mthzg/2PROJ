@@ -13,6 +13,8 @@ var occupied_cells = {}
 var road_positions: = {}
 var work_spot_cells = {}
 var citizen_house_position: Vector2i
+var buildings = {}  # Dictionary: building_instance -> array of Vector2i cells it occupies
+
 
 var ghost_cell = Vector2i.ZERO
 var is_ghost_active = false
@@ -199,11 +201,9 @@ func try_place_building(cell: Vector2i) -> bool:
 			return false
 
 
-# Place building by ID, mark cells occupied
 func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
 	var occupancy = current_building_data.get("occupancy", 0)
-
 
 	if scene == null:
 		return
@@ -213,24 +213,25 @@ func place_building(cell: Vector2i, size: Vector2i):
 	instance.global_position = ground_layer.to_global(local_pos)
 	add_child(instance)
 
+	# Track the instance and its occupied cells
+	buildings[instance] = []
+
 	for x in range(size.x):
 		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
-			occupied_cells[occupied_cell] = current_building_data.get("name")
-			
+			occupied_cells[occupied_cell] = instance
+			buildings[instance].append(occupied_cell)
 
-				
 			if current_building_data.get("name") == "Dirt road":
 				road_positions[occupied_cell] = "Dirt road"
-			
+
 			if current_building_data.get("name") == "Tree":
 				work_spot_cells[occupied_cell] = {
 					"type": "tree",
 					"max_workers": 1,
 					"current_workers": 0
 				}
-				
-				
+
 			if current_building_data.get("name") == "Water Workers Hut":
 				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
@@ -238,23 +239,23 @@ func place_building(cell: Vector2i, size: Vector2i):
 						"max_workers": 5,
 						"current_workers": 0
 					}
-					
+
 			if current_building_data.get("name") == "Berry Picker":
-				if x == 0 and y == 0:  # only one cell gets the work spot
+				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
 						"type": "berry",
 						"max_workers": 5,
 						"current_workers": 0
 					}
+
 			if current_building_data.get("name") == "Wood Cutter":
-				if x == 0 and y == 0:  # only one cell gets the work spot
+				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
 						"type": "wood",
 						"max_workers": 5,
 						"current_workers": 0
 					}
-			
-	# Track house only once, not for every occupied cell
+
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
 		houses.append({
@@ -262,11 +263,11 @@ func place_building(cell: Vector2i, size: Vector2i):
 			"occupancy": occupancy,
 			"assigned_citizens": []
 		})
-		assign_houses_to_citizens()  # assign immediately when house is placed
+		assign_houses_to_citizens()
 
-	# Update max citizens on main game script
 	if occupancy > 0 and main_game != null:
 		main_game.increase_max_citizens(occupancy)
+
 		
 
 
@@ -344,20 +345,53 @@ func delete_building_at(cell: Vector2i) -> bool:
 		print("❌ No building found at ", cell)
 		return false
 
-	var building_name = occupied_cells[cell]
-	occupied_cells.erase(cell)
-	if work_spot_cells.has(cell):
-		work_spot_cells.erase(cell)
-	if road_positions.has(cell):
-		road_positions.erase(cell)
+	var building_instance = occupied_cells[cell]
+	if building_instance == null:
+		print("❌ No building instance found at ", cell)
+		return false
 
-	for child in get_children():
-		if child.global_position == ground_layer.to_global(ground_layer.map_to_local(cell)):
-			child.queue_free()
-			return true  # return only when actual deletion happens
+	if not buildings.has(building_instance):
+		print("⚠ Building instance not found in buildings dictionary")
+		return false
 
-	print("⚠ Building data erased but node not found.")
-	return false  # fallback if node not found
+	var occupied_cells_list = buildings[building_instance]
+
+	# Remove occupied cells, work spots, road positions
+	for c in occupied_cells_list:
+		occupied_cells.erase(c)
+		work_spot_cells.erase(c)
+		road_positions.erase(c)
+
+	# Find the house that corresponds to this building's main cell (usually the first occupied cell)
+	for i in range(houses.size()):
+		if houses[i]["position"] == occupied_cells_list[0]:
+			# Unassign citizens from this house
+			for citizen in houses[i]["assigned_citizens"]:
+				# Add citizen back to unassigned list
+				unassigned_citizens.append(citizen)
+
+				# Also, clear the citizen's assigned house property if applicable
+				if citizen.has_method("assign_house"):
+					citizen.assign_house(Vector2i.ZERO)
+
+			houses.remove_at(i)
+			break
+
+	# Remove the building node
+	if is_instance_valid(building_instance):
+		building_instance.queue_free()
+
+	# Remove from buildings dictionary
+	buildings.erase(building_instance)
+
+	print("✅ Deleted building at ", cell)
+
+	# Optionally, try re-assigning houses to citizens
+	assign_houses_to_citizens()
+
+	return true
+
+
 
 func has_enough_berry_bushes(center: Vector2i) -> bool:
 	var count := 0
