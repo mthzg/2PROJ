@@ -102,6 +102,12 @@ metadata/_tab_index = 1
 [node name="WoodLabel" type="Label" parent="Control/TabContainer/TabInfo"]
 layout_mode = 2
 
+[node name="BerryLabel" type="Label" parent="Control/TabContainer/TabInfo"]
+layout_mode = 2
+
+[node name="WaterLabel" type="Label" parent="Control/TabContainer/TabInfo"]
+layout_mode = 2
+
 [node name="PopulationLabel" type="Label" parent="Control/TabContainer/TabInfo"]
 layout_mode = 2
 

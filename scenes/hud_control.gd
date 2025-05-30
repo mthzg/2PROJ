@@ -3,6 +3,8 @@ extends Control
 @onready var item_list: ItemList = $TabContainer/ItemList
 @onready var terrain_node: Node = get_node("../../Terrain")
 @onready var wood_label = $TabContainer/TabInfo/WoodLabel
+@onready var berry_label = $TabContainer/TabInfo/BerryLabel
+@onready var water_label = $TabContainer/TabInfo/WaterLabel
 @onready var pop_label = $TabContainer/TabInfo/PopulationLabel
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
 @onready var tab_work = $TabContainer/TabWork
@@ -103,9 +105,12 @@ func _on_item_selected(index: int):
 	# Pass data including cost to terrain node
 	terrain_node.set_current_building(data)
 	
-func update_info_tab(wood: int, total_citizens: int, occupied_slots: int, total_slots: int):
-	wood_label.text = "Total wood: %d" % wood
-	pop_label.text = "Population: %d" % total_citizens
+func update_info_tab(wood: int, max_wood: int, berry: int, max_berry: int, water: int, max_water: int, total_citizens: int, max_citizens:int, occupied_slots: int, total_slots: int):
+	wood_label.text = "Total wood: %d / %d" % [wood, max_wood]
+	berry_label.text = "Total berry: %d / %d" % [berry, max_berry]
+	water_label.text = "Total water: %d / %d" % [water, max_water]
+	
+	pop_label.text = "Population: %d / %d" % [total_citizens, max_citizens]
 	house_label.text = "Houses full: %d / %d" % [occupied_slots, total_slots]
 	
 func _process(delta):
@@ -118,10 +123,17 @@ func _process(delta):
 		update_work_tab(get_real_workplaces())
 
 	var wood = main_scene.wood
+	var max_wood = main_scene.max_wood
+	var berry = main_scene.berry
+	var max_berry = main_scene.max_berry
+	var water = main_scene.water
+	var max_water = main_scene.max_water
+	
 	var total_citizens = main_scene.total_citizens
+	var max_citizens = main_scene.max_citizens
 	var occupied = total_citizens
 	var total_slots = main_scene.max_citizens
-	update_info_tab(wood, total_citizens, occupied, total_slots)
+	update_info_tab(wood, max_wood, berry, max_berry, water, max_water,total_citizens, max_citizens, occupied, total_slots)
 
 func get_real_workplaces() -> Array:
 	if not main_scene:

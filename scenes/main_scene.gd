@@ -12,8 +12,14 @@ var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
 var wood: int = 100
+var max_wood: int = 0
+
 var berry: int = 100
+var max_berry: int = 0
+
 var water: int = 100
+var max_water: int = 0
+
 
 var berry_bushes: Array
 
@@ -28,6 +34,7 @@ var desired_water_workers: int = 0
 
 var current_wood_workers: int = 0
 var desired_wood_workers: int = 0
+
 
 func _ready():
 	# Pass self reference to terrain for resource access
@@ -51,6 +58,14 @@ func get_current_ressource_worker(type: String):
 		return current_tree_workers
 	elif type == "beryy":
 		return current_berry_workers
+
+func update_resource_capacity():
+	var house_count = terrain.houses.size()  # Adjust if your houses are stored differently
+
+	max_wood = house_count * 5
+	max_berry = house_count * 5
+	max_water = house_count * 5
+
 
 func _on_time_updated(current_time: String) -> void:
 	minute_counter += 1
@@ -132,9 +147,8 @@ func _on_time_updated(current_time: String) -> void:
 		else:
 			print("Max citizens reached. No new spawn.")
 			
-	#check_sleep_cycle()
-	#hud_control.update_work_tab(hud_control.get_real_workplaces())
-
+	check_sleep_cycle()
+	update_resource_capacity()
 
 			
 func check_sleep_cycle():
