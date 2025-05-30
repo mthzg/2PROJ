@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var tilemap: TileMap
+@onready var tilemap = get_node("../Terrain")
 @export var color: Color = Color(0, 0, 0, 1.0)  # Solid black
 
 @export var map_width: int = 100
@@ -8,6 +8,7 @@ extends Node2D
 
 func _draw():
 	if not tilemap:
+		print("test not found")
 		return
 
 	var cell_size = tilemap.tile_set.tile_size  # Vector2i

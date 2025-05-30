@@ -12,6 +12,9 @@ var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
 var wood: int = 100
+var berry: int = 100
+var water: int = 100
+
 var berry_bushes: Array
 
 var current_tree_workers: int = 0
