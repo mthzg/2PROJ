@@ -130,8 +130,10 @@ func get_real_workplaces() -> Array:
 	
 	var workplace_types = {
 		1: {"name": "Berry Picker", "type": "berry"},
-		2: {"name": "Wood Cutter", "type": "tree"},
-		3: {"name": "Water Workers Hut", "type": "water"}  # Only if applicable
+		2: {"name": "Tree", "type": "tree"},
+		3: {"name": "Water Workers Hut", "type": "water"},
+		4: {"name": "Wood Cutter", "type": "wood"}
+		
 	}
 
 	for id in workplace_types.keys():
@@ -211,7 +213,8 @@ func assign_workers_to_workplace(id: int, new_max: int):
 	var workplace_types = {
 		1: "berry",
 		2: "tree",
-		3: "water"
+		3: "water",
+		4: "wood"
 	}
 
 	if not workplace_types.has(id):
@@ -222,3 +225,7 @@ func assign_workers_to_workplace(id: int, new_max: int):
 		main_scene.set_desired_tree_workers(new_max)
 	elif resource_type == "berry":
 		main_scene.set_desired_berry_workers(new_max)
+	elif resource_type == "water":
+		main_scene.set_desired_water_workers(new_max)
+	elif resource_type == "wood":
+		main_scene.set_desired_wood_workers(new_max)

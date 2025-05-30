@@ -190,7 +190,7 @@ func start_gathering():
 		# Instead of giving wood here, go home first
 		is_gathering = false
 		has_gathered_resource = true
-		go_home()
+		stop_gathering()
 
 func go_home():
 	if house_position == Vector2i.ZERO:

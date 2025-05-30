@@ -16,9 +16,15 @@ var berry_bushes: Array
 
 var current_tree_workers: int = 0
 var desired_tree_workers: int = 0
+
 var current_berry_workers: int = 0
 var desired_berry_workers: int = 0
 
+var current_water_wokers: int = 0
+var desired_water_workers: int = 0
+
+var current_wood_workers: int = 0
+var desired_wood_workers: int = 0
 
 func _ready():
 	# Pass self reference to terrain for resource access
@@ -59,6 +65,18 @@ func _on_time_updated(current_time: String) -> void:
 		assign_citizens_to_gather("tree", delta_tree)
 	elif delta_tree < 0:
 		remove_citizens_from_gathering("tree", -delta_tree)
+		
+	var delta_water = desired_water_workers - current_water_wokers
+	if delta_water > 0:
+		assign_citizens_to_gather("water", delta_water)
+	elif delta_water < 0:
+		remove_citizens_from_gathering("water", -delta_water)
+		
+	var delta_wood = desired_wood_workers - current_wood_workers
+	if delta_wood > 0:
+		assign_citizens_to_gather("wood", delta_wood)
+	elif delta_wood < 0:
+		remove_citizens_from_gathering("wood", -delta_wood)
 
 		
 	# Manage citizens time_to_live:
@@ -78,6 +96,11 @@ func _on_time_updated(current_time: String) -> void:
 					current_tree_workers = max(0, current_tree_workers - 1)
 				elif res_type == "berry":
 					current_berry_workers = max(0, current_berry_workers - 1)
+				elif res_type == "water":
+					current_water_wokers = max(0, current_water_wokers - 1)
+				elif res_type == "wood":
+					current_wood_workers = max(0, current_wood_workers - 1)
+					
 			
 			c.cleanup_before_removal()
 			c.queue_free()
@@ -142,6 +165,10 @@ func check_sleep_cycle():
 					current_tree_workers = max(0, current_tree_workers - 1)
 				elif c.previous_resource_type == "berry":
 					current_berry_workers = max(0, current_berry_workers - 1)
+				elif c.previous_resource_type == "water":
+					current_water_wokers = max(0, current_water_wokers - 1)
+				elif c.previous_resource_type == "wood":
+					current_wood_workers = max(0, current_wood_workers - 1)
 				c.is_sleeping = true
 				print("Citizen is going to sleep after 19h of work.")
 
@@ -161,6 +188,10 @@ func remove_citizens_from_gathering(resource_type: String, max_to_remove: int) -
 				current_berry_workers -= 1
 			elif resource_type == "tree":
 				current_tree_workers -= 1
+			elif resource_type == "water":
+				current_water_wokers -= 1 
+			elif resource_type == "wood":
+				current_wood_workers -= 1 
 
 	print("Removed %d citizens from gathering %s" % [removed, resource_type])
 
@@ -169,6 +200,12 @@ func set_desired_berry_workers(value: int):
 
 func set_desired_tree_workers(value: int):
 	desired_tree_workers = value
+
+func set_desired_water_workers(value: int):
+	desired_water_workers = value
+	
+func set_desired_wood_workers(value: int):
+	desired_wood_workers = value
 
 	
 func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> void:
@@ -198,6 +235,10 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 				current_berry_workers += 1
 			elif resource_type == "tree":
 				set_desired_tree_workers(desired_tree_workers - 1)
+			elif resource_type == "water":
+				current_water_wokers += 1
+			elif resource_type == "wood":
+				current_wood_workers += 1				
 
 
 func set_speed_multiplier(multiplier: float) -> void:

@@ -228,6 +228,15 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"current_workers": 0
 				}
 				
+				
+			if current_building_data.get("name") == "Water Workers Hut":
+				if x == 0 and y == 0:
+					work_spot_cells[occupied_cell] = {
+						"type": "water",
+						"max_workers": 5,
+						"current_workers": 0
+					}
+					
 			if current_building_data.get("name") == "Berry Picker":
 				if x == 0 and y == 0:  # only one cell gets the work spot
 					work_spot_cells[occupied_cell] = {
@@ -235,6 +244,14 @@ func place_building(cell: Vector2i, size: Vector2i):
 						"max_workers": 5,
 						"current_workers": 0
 					}
+			if current_building_data.get("name") == "Wood Cutter":
+				if x == 0 and y == 0:  # only one cell gets the work spot
+					work_spot_cells[occupied_cell] = {
+						"type": "wood",
+						"max_workers": 5,
+						"current_workers": 0
+					}
+			
 	# Track house only once, not for every occupied cell
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
@@ -385,11 +402,26 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 				}
 				
 			if building_data.get("name") == "Berry Picker":
-				work_spot_cells[occupied_cell] = {
-					"type": "berry",
-					"max_workers": 5,
-					"current_workers": 0
-				}	
+				if x == 0 and y == 0:
+					work_spot_cells[occupied_cell] = {
+						"type": "berry",
+						"max_workers": 5,
+						"current_workers": 0
+					}	
+			if current_building_data.get("name") == "Water Workers Hut":
+				if x == 0 and y == 0:
+					work_spot_cells[occupied_cell] = {
+						"type": "water",
+						"max_workers": 5,
+						"current_workers": 0
+					}
+			if current_building_data.get("name") == "Wood Cutter":
+				if x == 0 and y == 0:  # only one cell gets the work spot
+					work_spot_cells[occupied_cell] = {
+						"type": "wood",
+						"max_workers": 5,
+						"current_workers": 0
+					}
 
 	# Apply occupancy if needed
 	var occupancy = building_data.get("occupancy", 0)
