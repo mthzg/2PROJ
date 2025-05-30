@@ -33,6 +33,7 @@ func _ready():
 	# Pass self reference to terrain for resource access
 	hud_control.main_scene = self
 	terrain.main_game = self  # terrain script will have `var main_game` to hold this
+	terrain.connect("building_selected", hud_control.show_building_info_popup)
 
 	for i in range(10):
 		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)

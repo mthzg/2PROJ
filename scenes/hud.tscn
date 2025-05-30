@@ -16,6 +16,22 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_6fi6k")
 
+[node name="BuildingInfoPopup" type="PopupPanel" parent="Control"]
+
+[node name="VBox" type="VBoxContainer" parent="Control/BuildingInfoPopup"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+
+[node name="InfoLabel" type="Label" parent="Control/BuildingInfoPopup/VBox"]
+layout_mode = 2
+text = "Info"
+
+[node name="CloseButton" type="Button" parent="Control/BuildingInfoPopup/VBox"]
+layout_mode = 2
+text = "Close"
+
 [node name="TabContainer" type="TabContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 12

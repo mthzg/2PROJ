@@ -89,6 +89,7 @@ func _ready():
 		update_work_tab(get_real_workplaces())
 		
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
+	$BuildingInfoPopup/VBox/CloseButton.connect("pressed", Callable($BuildingInfoPopup, "hide"))
 
 
 		
@@ -229,3 +230,20 @@ func assign_workers_to_workplace(id: int, new_max: int):
 		main_scene.set_desired_water_workers(new_max)
 	elif resource_type == "wood":
 		main_scene.set_desired_wood_workers(new_max)
+		
+func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
+	var popup = $BuildingInfoPopup
+	var label = popup.get_node("VBox/InfoLabel")
+	var info_text = ""
+	info_text += "[b]Building:[/b] %s\n" % building_data.get("name", "Unknown")
+	if building_data.has("work_spot"):
+		var ws = building_data["work_spot"]
+		info_text += "[b]Type:[/b] %s\n" % ws.get("type", "N/A")
+		info_text += "[b]Workers:[/b] %d / %d\n" % [ws.get("current_workers", 0), ws.get("max_workers", 0)]
+		if ws.get("type") == "berry":
+			# Assume you have a function or value for berry production per hour
+			var berries_per_worker_per_hour = 10  # Example value!
+			var per_hour = ws.get("current_workers", 0) * berries_per_worker_per_hour
+			info_text += "[b]Berry output/hour:[/b] %d\n" % per_hour
+	label.text = info_text
+	popup.popup_centered()

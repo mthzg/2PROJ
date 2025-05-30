@@ -1,6 +1,6 @@
 extends TileMap
 
-
+signal building_selected(cell: Vector2i, building_data: Dictionary)
 
 @onready var ground_layer := get_node("Ground")
 @onready var rocks_layer := get_node("Rocks")
@@ -89,34 +89,36 @@ func _ready():
 
 
 func _input(event):
+	# Cancel placement with right click
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if is_ghost_active:
 			print("cancel placement")
-			is_ghost_active = false	
+			is_ghost_active = false
 			ghost_cell = null
 			current_building_data = null
 			self.queue_redraw()
-			
+		return  # Prevents further processing for this event
+
+	# Left click events
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos = get_global_mouse_position()
 		var clicked_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
+		
 		if is_ghost_active and ghost_cell != null:
 			if try_place_building(ghost_cell):
-				#if current_building_data.get("name") != "Dirt road":
-				#	# Place building one by one
-				#	is_ghost_active = false
-				#	ghost_cell = null
-				#	current_building_data = null
 				pass
 			self.queue_redraw()
 			if current_building_data != null and current_building_data.get("name") == "Eraser":
 				delete_building_at(clicked_cell)
 				return  # Don't try placement
-
-			if is_ghost_active and ghost_cell != null:
-				if try_place_building(ghost_cell):
-					pass
-				self.queue_redraw()
+		elif not is_ghost_active:
+			# Select building if one is under the cursor
+			if occupied_cells.has(clicked_cell):
+				var building_name = occupied_cells[clicked_cell]
+				var data = get_building_data_from_name(building_name)
+				if work_spot_cells.has(clicked_cell):
+					data["work_spot"] = work_spot_cells[clicked_cell]
+				emit_signal("building_selected", clicked_cell, data)
 
 			
 
