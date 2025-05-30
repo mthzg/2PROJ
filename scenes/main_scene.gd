@@ -7,7 +7,8 @@ extends Node2D
 
 var current_speed_multiplier: float = 1.0
 
-var minute_counter := 0
+var minute_counter_spawn := 0
+var minute_counter_collect_ressource := 0
 var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
@@ -68,8 +69,8 @@ func update_resource_capacity():
 
 
 func _on_time_updated(current_time: String) -> void:
-	minute_counter += 1
-	
+	minute_counter_spawn += 1
+	minute_counter_collect_ressource += 1
 	
 	
 	var delta_berry = desired_berry_workers - current_berry_workers
@@ -129,8 +130,8 @@ func _on_time_updated(current_time: String) -> void:
 
 
 	# Spawn new citizens every 60 minutes (if under max)
-	if minute_counter >= 20:
-		minute_counter = 0
+	if minute_counter_spawn >= 30:
+		minute_counter_spawn = 0
 		#set_desired_berry_workers(3)
 		#set_desired_tree_workers(3)
 		if total_citizens < max_citizens:
@@ -146,8 +147,13 @@ func _on_time_updated(current_time: String) -> void:
 			print("Max = ", max_citizens)
 		else:
 			print("Max citizens reached. No new spawn.")
+	if minute_counter_collect_ressource >= 40:
+		minute_counter_collect_ressource = 0
+		increment_berry(current_berry_workers)
+		increment_wood(current_wood_workers)
+		
 			
-	#	check_sleep_cycle()
+	check_sleep_cycle()
 	update_resource_capacity()
 
 			
@@ -262,7 +268,19 @@ func spend_wood(amount: int) -> void:
 	print("Wood spent:", amount, " Remaining wood:", wood)
 
 func increment_wood(amount: int):
-	wood += amount
+	if wood + amount <= max_wood:
+		wood += amount
+	
+func can_spend_berry(amount: int) -> bool:
+	return berry >= amount
+
+func spend_berry(amount: int) -> void:
+	berry -= amount
+	print("berry spent:", amount, " Remaining berry:", berry)
+
+func increment_berry(amount: int):
+	if berry + amount <= max_berry:
+		berry += amount
 
 func increase_max_citizens(amount: int = 1) -> void:
 	max_citizens += amount
