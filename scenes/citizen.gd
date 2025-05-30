@@ -40,26 +40,32 @@ func assign_house(house_pos: Vector2i):
 	#	go_gather("tree")
 
 func cleanup_before_removal():
-	if house_position == Vector2i.ZERO:
-		return
-
-	for house in terrain_tilemap.houses:
-		if house.has("position") and house["position"] == house_position:
-			if house.has("assigned_citizens"):
-				var original_count = house["assigned_citizens"].size()
-				house["assigned_citizens"] = house["assigned_citizens"].filter(func(c): return c != self)
-				var new_count = house["assigned_citizens"].size()
-
-				if original_count != new_count:
+	# Remove from house
+	if house_position != Vector2i.ZERO:
+		for house in terrain_tilemap.houses:
+			if house.has("position") and house["position"] == house_position:
+				if house.has("assigned_citizens"):
+					house["assigned_citizens"] = house["assigned_citizens"].filter(func(c): return c != self)
 					print("Citizen removed from house at", house_position)
-				else:
-					print("Citizen not found in house at", house_position)
-			break
+				break
 
+	# Decrement work spot workers if needed
+	if gather_target != Vector2i.ZERO and gather_target in work_spot_cells:
+		work_spot_cells[gather_target].current_workers = max(0, work_spot_cells[gather_target].current_workers - 1)
+		print("Decremented worker count at: ", gather_target)
+
+	# Reset all
 	house_position = Vector2i.ZERO
+	gather_target = Vector2i.ZERO
+	is_gathering = false
+	is_returning_home = false
+	path.clear()
+	path_index = 0
 
+	# Reassign
 	if terrain_tilemap and terrain_tilemap.has_method("assign_houses_to_citizens"):
 		terrain_tilemap.assign_houses_to_citizens()
+
 
 
 
@@ -145,22 +151,23 @@ func stop_gathering():
 	go_home()
 
 
-func go_gather(resource_type: String) -> void:
-	
+func go_gather(resource_type: String) -> bool:
 	if house_position == Vector2i.ZERO:
 		print("Citizen cannot work without a home.")
-		return
-		
+		return false
+	if is_gathering or gather_target != Vector2i.ZERO:
+		print("Already gathering, skipping duplicate call")
+		return false
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var start_cell = terrain_tilemap.local_to_map(local_pos)
 
 	var nearest := Vector2i.ZERO
 	var found := false
 	var min_distance := INF
+
 	for target_cell in work_spot_cells.keys():
 		var data = work_spot_cells[target_cell]
-
-		if (data.type == resource_type and data.current_workers < data.max_workers ):
+		if (data.type == resource_type and data.current_workers < data.max_workers):
 			var dist = start_cell.distance_to(target_cell)
 			if dist < min_distance:
 				min_distance = dist
@@ -168,13 +175,17 @@ func go_gather(resource_type: String) -> void:
 				found = true
 
 	if not found:
-		return
+		return false
 
 	current_ressource_type_to_gather = resource_type
 	work_spot_cells[nearest].current_workers += 1
 	gather_target = nearest
 	path = find_path(start_cell, nearest)
 	path_index = 0
+	return true
+
+
+
 	
 	
 func start_gathering():

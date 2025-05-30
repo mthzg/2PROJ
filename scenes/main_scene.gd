@@ -147,7 +147,7 @@ func _on_time_updated(current_time: String) -> void:
 		else:
 			print("Max citizens reached. No new spawn.")
 			
-	check_sleep_cycle()
+	#	check_sleep_cycle()
 	update_resource_capacity()
 
 			
@@ -162,30 +162,20 @@ func check_sleep_cycle():
 			if c.sleep_timer >= 5:  # 5 in-game hours
 				c.is_sleeping = false
 				c.sleep_timer = 0
-				#print("Citizen waking up and resuming", c.previous_resource_type)
-
-				#if c.previous_resource_type != "":
-				#	c.go_gather(c.previous_resource_type)
-				#	if c.previous_resource_type == "tree":
-				#		current_tree_workers += 1
-				#	elif c.previous_resource_type == "berry":
-				#		current_berry_workers += 1
-				#c.previous_resource_type = ""
 
 		# Citizen is working
 		elif c.is_gathering:
 			c.work_hours_elapsed += 1
 			if c.work_hours_elapsed >= 20:  # 19 in-game hours
 				c.work_hours_elapsed = 0
-				c.previous_resource_type = c.current_ressource_type_to_gather
 				c.stop_gathering()
-				if c.previous_resource_type == "tree":
+				if c.current_ressource_type_to_gather == "tree":
 					current_tree_workers = max(0, current_tree_workers - 1)
-				elif c.previous_resource_type == "berry":
+				elif c.current_ressource_type_to_gather == "berry":
 					current_berry_workers = max(0, current_berry_workers - 1)
-				elif c.previous_resource_type == "water":
+				elif c.current_ressource_type_to_gather == "water":
 					current_water_wokers = max(0, current_water_wokers - 1)
-				elif c.previous_resource_type == "wood":
+				elif c.current_ressource_type_to_gather == "wood":
 					current_wood_workers = max(0, current_wood_workers - 1)
 				c.is_sleeping = true
 				print("Citizen is going to sleep after 19h of work.")
@@ -228,35 +218,32 @@ func set_desired_wood_workers(value: int):
 	
 func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> void:
 	var assigned = 0
+
 	for c in citizens:
 		if assigned >= max_to_assign:
 			break
 		if not is_instance_valid(c):
 			continue
-		# Check if citizen is idle (you can define this flag in your citizen)
 		if c.is_gathering or c.is_returning_home or c.has_gathered_resource:
 			continue
-		
-		# Check if there is at least one work spot with free space for resource_type
-		var can_assign = false
-		for spot_cell in c.work_spot_cells.keys():
-			var spot = c.work_spot_cells[spot_cell]
-			if spot.type == resource_type and spot.current_workers < spot.max_workers:
-				can_assign = true
-				break
-		
-		if can_assign:
-			print("citizen going to work = ", resource_type)
-			c.go_gather(resource_type)
+
+		var success = c.go_gather(resource_type)
+		if success:
 			assigned += 1
-			if resource_type == "berry":
-				current_berry_workers += 1
-			elif resource_type == "tree":
-				set_desired_tree_workers(desired_tree_workers - 1)
-			elif resource_type == "water":
-				current_water_wokers += 1
-			elif resource_type == "wood":
-				current_wood_workers += 1				
+
+			match resource_type:
+				"berry":
+					current_berry_workers += 1
+					print("Assigned to berry")
+				"tree":
+					current_tree_workers += 1
+				"water":
+					current_water_wokers += 1
+				"wood":
+					current_wood_workers += 1
+
+
+		
 
 
 func set_speed_multiplier(multiplier: float) -> void:

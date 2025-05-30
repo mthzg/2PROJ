@@ -485,6 +485,12 @@ func get_building_data_from_name(name: String) -> Dictionary:
 			"scene": preload("res://scenes/Buildings/Tree.tscn"),
 			"size": Vector2i(1, 1),
 			"cost": {}
+		},
+		"Berry Picker": {
+			"name": "Berry Picker", 
+			"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
+			"size": Vector2i(2,2),
+			"cost": {"wood": 15}
 		}
 	}
 	return all_buildings.get(name, {})
