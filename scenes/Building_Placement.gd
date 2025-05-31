@@ -494,11 +494,35 @@ func get_building_data_from_name(name: String) -> Dictionary:
 			"size": Vector2i(1, 1),
 			"cost": {}
 		},
+		"Greatfire": {
+			"name": "Greatfire",
+			"scene": preload("res://scenes/Buildings/GreatFire.tscn"),
+			"size": Vector2i(2, 2),
+			"cost": {}
+		},
 		"Berry Picker": {
-			"name": "Berry Picker", 
-			"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
-			"size": Vector2i(2,2),
+			"name": "Berry Picker",
+			"scene": preload("res://scenes/Buildings/BerryPicker.tscn"),
+			"size": Vector2i(2, 2),
 			"cost": {"wood": 15}
+		},
+		"Berry Bush": {
+			"name": "Berry Bush",
+			"scene": preload("res://scenes/Buildings/BerryBush.tscn"),
+			"size": Vector2i(1, 1),
+			"cost": {}
+		},
+		"Wood Cutter": {
+			"name": "Wood Cutter",
+			"scene": preload("res://scenes/Buildings/WoodCutter.tscn"),
+			"size": Vector2i(2, 2),
+			"cost": {}
+		},
+		"Water Workers Hut": {
+			"name": "Water Workers Hut",
+			"scene": preload("res://scenes/Buildings/WaterWorkersHut.tscn"),
+			"size": Vector2i(2, 2),
+			"cost": {"wood": 10}
 		}
 	}
 	return all_buildings.get(name, {})

@@ -28,6 +28,10 @@ offset_bottom = 96.0
 layout_mode = 2
 text = "Info"
 
+[node name="ProgressBar" type="ProgressBar" parent="Control/BuildingInfoPopup/VBox"]
+visible = false
+layout_mode = 2
+
 [node name="CloseButton" type="Button" parent="Control/BuildingInfoPopup/VBox"]
 layout_mode = 2
 text = "Close"
