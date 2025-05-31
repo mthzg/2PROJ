@@ -99,7 +99,7 @@ func _input(event):
 			ghost_cell = null
 			current_building_data = null
 			self.queue_redraw()
-		return  # Prevents further processing for this event
+		return
 
 	# Left click events
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -112,11 +112,17 @@ func _input(event):
 			self.queue_redraw()
 			if current_building_data != null and current_building_data.get("name") == "Eraser":
 				delete_building_at(clicked_cell)
-				return  # Don't try placement
+				return 
 		elif not is_ghost_active:
-			# Select building if one is under the cursor
 			if occupied_cells.has(clicked_cell):
-				var building_name = occupied_cells[clicked_cell]
+				var cell_value = occupied_cells[clicked_cell]
+				var building_name = ""
+				if typeof(cell_value) == TYPE_STRING:
+					building_name = cell_value
+				elif typeof(cell_value) == TYPE_OBJECT and cell_value.has_meta("building_name"):
+					building_name = cell_value.get_meta("building_name")
+				else:
+					building_name = ""
 				var data = get_building_data_from_name(building_name)
 				if work_spot_cells.has(clicked_cell):
 					data["work_spot"] = work_spot_cells[clicked_cell]
@@ -205,10 +211,12 @@ func place_building(cell: Vector2i, size: Vector2i):
 	var scene = current_building_data.get("scene")
 	var occupancy = current_building_data.get("occupancy", 0)
 
+
 	if scene == null:
 		return
 
 	var instance = scene.instantiate()
+	instance.set("building_name", current_building_data.get("name", ""))
 	var local_pos = ground_layer.map_to_local(cell)
 	instance.global_position = ground_layer.to_global(local_pos)
 	add_child(instance)
