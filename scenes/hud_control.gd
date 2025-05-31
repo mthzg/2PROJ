@@ -249,15 +249,15 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 	var info_text = ""
 
 	# Always show name
-	info_text += "[b]Building:[/b] %s\n" % building_data.get("name", "Unknown")
-	info_text += "[b]Size:[/b] %s\n" % str(building_data.get("size", ""))
+	info_text += "Building: %s\n" % building_data.get("name", "Unknown")
+	info_text += "Size: %s\n" % str(building_data.get("size", ""))
 
 	# Show cost if any
 	if building_data.has("cost") and building_data.cost.size() > 0:
 		var cost_strs = []
 		for k in building_data.cost.keys():
 			cost_strs.append("%s: %d" % [k.capitalize(), building_data.cost[k]])
-		info_text += "[b]Cost:[/b] %s\n" % ", ".join(cost_strs)
+		info_text += "Cost: %s\n" % ", ".join(cost_strs)
 
 	# Show workplace info
 	var name = building_data.get("name", "")
@@ -265,11 +265,11 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 
 	if workplace_buildings.has(name) and building_data.has("work_spot"):
 		var ws = building_data["work_spot"]
-		info_text += "[b]Type:[/b] %s\n" % ws.get("type", "N/A")
-		info_text += "[b]Workers:[/b] %d / %d\n" % [ws.get("current_workers", 0), ws.get("max_workers", 0)]
+		info_text += "Type: %s\n" % ws.get("type", "N/A")
+		info_text += "Workers: %d / %d\n" % [ws.get("current_workers", 0), ws.get("max_workers", 0)]
 		if ws.get("type") == "berry":
 			var per_hour = ws.get("current_workers", 0) * 10
-			info_text += "[b]Berry output/hour:[/b] %d\n" % per_hour
+			info_text += "Berry output/hour: %d\n" % per_hour
 		# --- Tree progress bar addition ---
 		if name == "Tree":
 			var progress_bar = popup.get_node("VBox/ProgressBar") if popup.has_node("VBox/ProgressBar") else null
@@ -277,9 +277,9 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 				progress_bar.visible = true
 				var progress = ws.get("cut_progress", 0.0)
 				progress_bar.value = progress
-				info_text += "[b]Tree Cut Progress:[/b]\n"
+				info_text += "Tree Cut Progress:\n"
 			else:
-				info_text += "[b]Tree Cut Progress:[/b] (missing ProgressBar node)\n"
+				info_text += "Tree Cut Progress: (missing ProgressBar node)\n"
 	else:
 		# Hide progress bar if not a tree
 		if popup.has_node("VBox/ProgressBar"):

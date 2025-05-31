@@ -217,7 +217,7 @@ func place_building(cell: Vector2i, size: Vector2i):
 		return
 
 	var instance = scene.instantiate()
-	instance.set("building_name", current_building_data.get("name", ""))
+	instance.set_meta("building_name", current_building_data.get("name", ""))
 	var local_pos = ground_layer.map_to_local(cell)
 	instance.global_position = ground_layer.to_global(local_pos)
 	add_child(instance)
@@ -495,17 +495,17 @@ func get_building_data_from_name(name: String) -> Dictionary:
 			"size": Vector2i(1, 1),
 			"cost": {}
 		},
+		"Berry Picker": {
+			"name": "Berry Picker", 
+			"scene": preload("res://scenes/Buildings/BerryPicker.tscn"), 
+			"size": Vector2i(2,2),
+			"cost": {"wood": 15}
+		},
 		"Greatfire": {
 			"name": "Greatfire",
 			"scene": preload("res://scenes/Buildings/GreatFire.tscn"),
-			"size": Vector2i(2, 2),
+			"size": Vector2i(2,2),
 			"cost": {}
-		},
-		"Berry Picker": {
-			"name": "Berry Picker",
-			"scene": preload("res://scenes/Buildings/BerryPicker.tscn"),
-			"size": Vector2i(2, 2),
-			"cost": {"wood": 15}
 		},
 		"Berry Bush": {
 			"name": "Berry Bush",
