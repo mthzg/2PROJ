@@ -71,9 +71,10 @@ func spawn_30_trees():
 		var local_pos = ground_layer.map_to_local(cell)
 		instance.global_position = ground_layer.to_global(local_pos)
 		add_child(instance)
-
+		occupied_cells[cell] = instance
+		buildings[instance] = [cell]
 		# Mark cell occupied and work spot for wood
-		occupied_cells[cell] = "Tree"
+		#occupied_cells[cell] = "Tree"
 		work_spot_cells[cell] = {
 			"type": "tree",
 			"max_workers": 1,
