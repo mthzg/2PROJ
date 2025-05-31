@@ -191,7 +191,7 @@ func go_gather(resource_type: String) -> bool:
 func start_gathering():
 	is_gathering = true
 	if current_ressource_type_to_gather == "tree":
-		var gather_time = 40.0 / _speed_multiplier
+		var gather_time = 5.0 / _speed_multiplier
 		await get_tree().create_timer(gather_time).timeout
 	
 		# Delete tree at gather_target
