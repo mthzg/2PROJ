@@ -68,6 +68,7 @@ func spawn_30_trees():
 		# Directly place the tree building here
 		var tree_scene = preload("res://scenes/Buildings/Tree.tscn")
 		var instance = tree_scene.instantiate()
+		instance.set_meta("building_name", "Tree")
 		var local_pos = ground_layer.map_to_local(cell)
 		instance.global_position = ground_layer.to_global(local_pos)
 		add_child(instance)
