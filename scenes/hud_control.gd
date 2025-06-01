@@ -78,7 +78,7 @@ var building_data = {
 		"scene": preload("res://scenes/Buildings/WoodCutter.tscn"), 
 		"png":"res://Assets/WoodCutter.png", 
 		"size": Vector2i(2, 2),
-		"cost": {},
+		"cost": {"wood": 15},
 		"unlocked": false
 	},
 	9: {
@@ -86,7 +86,7 @@ var building_data = {
 		"scene": preload("res://scenes/Buildings/WaterWorkersHut.tscn"), 
 		"png":"res://Assets/waterworkershut.png", 
 		"size": Vector2i(2, 2),
-		"cost": {"wood": 10},
+		"cost": {"wood": 15},
 		"unlocked": false
 	},
 }

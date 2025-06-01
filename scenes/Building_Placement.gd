@@ -52,7 +52,7 @@ func spawn_30_trees():
 	var placed = 0
 	var map_bounds = ground_layer.get_used_rect()
 
-	while placed < 30:
+	while placed < 60:
 		var rand_x = randi() % map_bounds.size.x + map_bounds.position.x
 		var rand_y = randi() % map_bounds.size.y + map_bounds.position.y
 		var cell = Vector2i(rand_x, rand_y)

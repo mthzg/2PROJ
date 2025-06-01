@@ -25,7 +25,6 @@ limit_bottom = 208
 script = ExtResource("4_pu3yx")
 
 [node name="GridOverlay" type="Node2D" parent="."]
-visible = false
 top_level = true
 script = ExtResource("5_gubc5")
 

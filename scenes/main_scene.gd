@@ -12,13 +12,13 @@ var minute_counter_collect_ressource := 0
 var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
-var wood: int = 100
+var wood: int = 0
 var max_wood: int = 0
 
-var berry: int = 100
+var berry: int = 0
 var max_berry: int = 0
 
-var water: int = 100
+var water: int = 0
 var max_water: int = 0
 
 
