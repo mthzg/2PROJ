@@ -8,6 +8,8 @@ extends Control
 @onready var pop_label = $TabContainer/TabInfo/PopulationLabel
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
 @onready var tab_work = $TabContainer/TabWork
+@onready var grid_overlay = get_node("../../GridOverlay")
+@onready var tab_container = $TabContainer
 
 var spinbox_timers = {}
 const DEBOUNCE_DELAY := 0.5
@@ -92,6 +94,8 @@ var building_data = {
 }
 
 func _ready():
+	tab_container.connect("tab_changed", Callable(self, "_on_tab_changed"))
+	grid_overlay.visible = (tab_container.current_tab == 0)
 	for id in building_data.keys():
 		var data = building_data[id]
 		if data.get("unlocked") == true:
@@ -102,6 +106,7 @@ func _ready():
 		
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
 	$BuildingInfoPopup/VBox/CloseButton.connect("pressed", Callable($BuildingInfoPopup, "hide"))
+
 
 func unlock_building_by_name(building_name: String) -> bool:
 	for id in building_data.keys():
@@ -342,3 +347,6 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 
 	label.text = info_text
 	popup.popup_centered()
+	
+func _on_tab_changed(tab_idx: int) -> void:
+	grid_overlay.visible = (tab_idx == 0)
