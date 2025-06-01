@@ -181,18 +181,27 @@ func check_sleep_cycle():
 				elif c.current_ressource_type_to_gather == "wood":
 					current_wood_workers = max(0, current_wood_workers - 1)
 				c.is_sleeping = true
-				consume_ressources()
+				var consumed_ressources: int = 0
+				consumed_ressources = consume_ressources()
+				c.increment_time_to_live(consumed_ressources)
 				print("Citizen is going to sleep after 19h of work.")
 
-func consume_ressources():
+func consume_ressources() -> int:
+	var ressource_consumed = 0
 	if water > 0:
 		if can_spend_water(1):
 			print("consomme 1 d'eau")
 			spend_water(1)
+			ressource_consumed += 1
 	if berry > 0:
 		if can_spend_berry(1):
 			print("consome 1 berry")
 			spend_berry(1)
+			ressource_consumed += 1
+
+	return ressource_consumed
+
+	
 	
 func remove_citizens_from_gathering(resource_type: String, max_to_remove: int) -> void:
 	var removed = 0

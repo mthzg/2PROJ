@@ -277,7 +277,14 @@ func _input_event(viewport, event, shape_idx):
 		if main_game and main_game.has_method("show_citizen_popup"):
 			main_game.show_citizen_popup(self)
 			
-
+func increment_time_to_live(counter: int):
+	if counter == 1:
+		time_to_live += 5
+	elif counter == 2:
+		time_to_live += 10
+	print("new time to live = ", time_to_live)
+	
+	
 
 func get_age_seconds() -> int:
 	return int(Time.get_unix_time_from_system() - birth_time)
