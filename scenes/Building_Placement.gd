@@ -342,6 +342,7 @@ func assign_houses_to_citizens():
 	
 	
 func spawn_citizens(speed_multiplier: float = 1.0):
+	print("Spawning a citizen")
 	var spawn_cell = Vector2i(-1, -6)
 	var spawn_position: Vector2 = ground_layer.to_global(ground_layer.map_to_local(spawn_cell))
 	var citizen_instance = citizen_scene.instantiate()

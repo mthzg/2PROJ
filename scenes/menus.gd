@@ -55,13 +55,13 @@ func _on_load_game_pressed():
 			clock.play()
 
 			citizen_count = save_data.get("citizens", 0)
+			print("citizen_count on load:", citizen_count)
 
 			# Remove existing buildings if needed
 			for building in buildings:
 				building.queue_free()
 			buildings.clear()
 			building_placement.clear_buildings()
-			
 
 			for b_data in save_data.get("buildings", []):
 				var cell = b_data["cell"]
@@ -69,23 +69,34 @@ func _on_load_game_pressed():
 				var building_data = building_placement.get_building_data_from_name(type)
 				if building_data != null:
 					building_placement.place_building_direct(cell, building_data)
-
 					var success = building_placement.try_place_building(cell)
 					if not success:
 						print("❌ Failed to place building:", type, "at", cell)
 				else:
 					print("⚠ Unknown building type:", type)
 
+			# Remove existing citizens before spawning new ones
+			for c in building_placement.get_children():
+				if "Citizen" in str(c):
+					c.queue_free()
 
-
-
+			print("Spawning citizens...")
+			for i in range(citizen_count):
+				building_placement.spawn_citizens()
 
 			print("Game loaded:", save_data)
 			self.visible = false
 
 
 
+
 func _on_save_game_pressed():
+	# Count citizens before saving
+	citizen_count = 0
+	for c in building_placement.get_children():
+		if "Citizen" in str(c):  # Adjust this check if needed
+			citizen_count += 1
+
 	var file := FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
 	if file:
 		var save_data = {
@@ -101,7 +112,6 @@ func _on_save_game_pressed():
 		var already_saved = {}
 		for cell in building_placement.occupied_cells:
 			var name = building_placement.occupied_cells[cell]
-			# Make sure to extract name if it's an object
 			if typeof(name) == TYPE_OBJECT and name.has_meta("building_name"):
 				name = name.get_meta("building_name")
 			var building_data = building_placement.get_building_data_from_name(name)
@@ -111,7 +121,10 @@ func _on_save_game_pressed():
 				for dx in range(size.x):
 					for dy in range(size.y):
 						var candidate = cell - Vector2i(dx, dy)
-						if (dx > 0 or dy > 0) and building_placement.occupied_cells.get(candidate, "") == name:
+						var occ = building_placement.occupied_cells.get(candidate, "")
+						if typeof(occ) == TYPE_OBJECT and occ.has_meta("building_name"):
+							occ = occ.get_meta("building_name")
+						if (dx > 0 or dy > 0) and occ == name:
 							is_origin = false
 				if is_origin and not already_saved.has(cell):
 					save_data["buildings"].append({
@@ -122,7 +135,6 @@ func _on_save_game_pressed():
 
 		file.store_var(save_data)
 		print("Game saved:", save_data)
-
 
 
 func _on_reset_data_pressed():
