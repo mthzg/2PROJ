@@ -313,7 +313,8 @@ func increase_max_citizens(amount: int = 1) -> void:
 	print("max_citizens increased to:", max_citizens)
 	
 	
-func _on_citizen_clicked(citizen):
+func show_citizen_popup(citizen):
+	print("show_citizen_popup called with: ", citizen)
 	var popup = $CanvasLayer/Control/CitizenInfoPopup
 	popup.show_citizen_info(citizen)
 	popup.popup_centered()

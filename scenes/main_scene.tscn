@@ -13,6 +13,7 @@ script = ExtResource("1_pu3yx")
 
 [node name="Citizen" parent="." instance=ExtResource("8_18nlu")]
 show_behind_parent = true
+z_index = 100
 
 [node name="CanvasLayer" parent="." instance=ExtResource("7_c16ls")]
 
