@@ -59,16 +59,3 @@ Ce jeu de gestion/simulation a été réalisé avec **Godot 4.4**. Le joueur doi
 - Toutes les scènes, scripts, et assets sont gérés directement depuis le projet Godot.
 
 ---
-
-## 📦 À venir (idées de futures fonctionnalités)
-
-- Gestion avancée de la nourriture et de l’eau potable  
-- Niveaux de bonheur ou d'efficacité des citoyens  
-- Commerce entre villes ou événements aléatoires  
-- Interface utilisateur améliorée pour la gestion de la population  
-
----
-
-## 👨‍💻 Auteur
-
-Ce projet a été développé par [TonNom], dans le cadre d’un apprentissage ou projet personnel autour de la simulation de civilisation avec Godot.
