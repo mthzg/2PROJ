@@ -191,7 +191,7 @@ func check_sleep_cycle():
 				elif c.current_ressource_type_to_gather == "wood":
 					current_wood_workers = max(0, current_wood_workers - 1)
 				elif c.current_ressource_type_to_gather == "research":
-					current_research_workers = max(0, current_research_workers -1)
+					current_research_workers = max(0, current_research_workers - 1)
 				c.is_sleeping = true
 				var consumed_ressources: int = 0
 				consumed_ressources = consume_ressources()
@@ -266,7 +266,6 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 
 		var success = c.go_gather(resource_type)
 		if success:
-			print("here")
 			assigned += 1
 
 			match resource_type:
@@ -279,7 +278,7 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 					current_water_wokers += 1
 				"wood":
 					current_wood_workers += 1
-				"researh":
+				"research":
 					current_research_workers += 1
 
 

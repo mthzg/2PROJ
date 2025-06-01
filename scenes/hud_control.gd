@@ -182,7 +182,7 @@ func get_real_workplaces() -> Array:
 		2: {"name": "Tree", "type": "tree"},
 		3: {"name": "Water Workers Hut", "type": "water"},
 		4: {"name": "Wood Cutter", "type": "wood"},
-		5: {"name": "Research hut", "type": "researh"}
+		5: {"name": "Research hut", "type": "research"}
 		
 		
 	}

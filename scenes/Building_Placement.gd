@@ -569,7 +569,7 @@ func get_building_data_from_name(name: String) -> Dictionary:
 			"cost": {"wood": 10}
 		},
 		"Research hut": {
-			"name": "researh",
+			"name": "research",
 			"scene": preload("res://scenes/Buildings/Research.tscn"),
 			"size": Vector2i(2, 2),
 			"cost": {"wood": 10}
