@@ -177,7 +177,12 @@ func try_place_building(cell: Vector2i) -> bool:
 	# Apply "first 5 houses free" rule
 	if current_building_data.get("name") == "Small House" and house_built_count < free_house_limit:
 		cost["wood"] = 0
-
+		
+	if current_building_data.get("name") == "Water Workers Hut":
+		if not is_next_to_water(cell, size):
+			print("❌ Water Workers Hut must be placed next to water!")
+			return false
+			
 	# Check resources
 	if main_game != null:
 		for resource_name in cost.keys():
@@ -205,6 +210,26 @@ func try_place_building(cell: Vector2i) -> bool:
 		if not has_enough_berry_bushes(cell):
 			print("❌ Not enough berry bushes nearby to place Berry Picker!")
 			return false
+			
+
+
+			
+			
+func is_next_to_water(cell: Vector2i, size: Vector2i) -> bool:
+	for x in range(size.x):
+		for y in range(size.y):
+			var current_cell = cell + Vector2i(x, y)
+
+			# Check 8 neighbors around current cell
+			for dx in [-1, 0, 1]:
+				for dy in [-1, 0, 1]:
+					if dx == 0 and dy == 0:
+						continue
+					var neighbor = current_cell + Vector2i(dx, dy)
+					var water_tile = water_layer.get_cell_source_id(neighbor)
+					if water_tile != -1:
+						return true
+	return false
 
 
 func place_building(cell: Vector2i, size: Vector2i):

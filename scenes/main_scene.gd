@@ -132,16 +132,12 @@ func _on_time_updated(current_time: String) -> void:
 	# Spawn new citizens every 60 minutes (if under max)
 	if minute_counter_spawn >= 30:
 		minute_counter_spawn = 0
-		#set_desired_berry_workers(3)
-		#set_desired_tree_workers(3)
 		if total_citizens < max_citizens:
 			var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 			if new_citizen:
 				citizens.append(new_citizen)
 				total_citizens += 1
 				new_citizen.main_game = self
-				#new_citizen.go_gather("tree")
-				#new_citizen.go_gather("berry")
 				
 			print("Total citizens = ", total_citizens)
 			print("Max = ", max_citizens)
@@ -151,6 +147,7 @@ func _on_time_updated(current_time: String) -> void:
 		minute_counter_collect_ressource = 0
 		increment_berry(current_berry_workers)
 		increment_wood(current_wood_workers)
+		increment_water(current_water_wokers)
 		
 			
 	check_sleep_cycle()
