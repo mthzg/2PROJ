@@ -5,6 +5,7 @@ extends Control
 @onready var wood_label = $TabContainer/TabInfo/WoodLabel
 @onready var berry_label = $TabContainer/TabInfo/BerryLabel
 @onready var water_label = $TabContainer/TabInfo/WaterLabel
+@onready var search_label = $TabContainer/TabInfo/SearchLabel
 @onready var pop_label = $TabContainer/TabInfo/PopulationLabel
 @onready var house_label = $TabContainer/TabInfo/HousingLabel
 @onready var tab_work = $TabContainer/TabWork
@@ -133,6 +134,8 @@ func update_info_tab(wood: int, max_wood: int, berry: int, max_berry: int, water
 	wood_label.text = "Total wood: %d / %d" % [wood, max_wood]
 	berry_label.text = "Total berry: %d / %d" % [berry, max_berry]
 	water_label.text = "Total water: %d / %d" % [water, max_water]
+	search_label.text = "Total Research Points: %d / %d" % [0, 0]
+	
 	
 	pop_label.text = "Population: %d / %d" % [total_citizens, max_citizens]
 	house_label.text = "Houses full: %d / %d" % [occupied_slots, total_slots]

@@ -139,6 +139,9 @@ layout_mode = 2
 [node name="WaterLabel" type="Label" parent="Control/TabContainer/TabInfo"]
 layout_mode = 2
 
+[node name="SearchLabel" type="Label" parent="Control/TabContainer/TabInfo"]
+layout_mode = 2
+
 [node name="PopulationLabel" type="Label" parent="Control/TabContainer/TabInfo"]
 layout_mode = 2
 
