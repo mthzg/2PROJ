@@ -8,7 +8,7 @@ func _ready():
 func _update_buttons(active_button: Button):
 	for child in get_children():
 		child.modulate = Color.WHITE
-	active_button.modulate = Color(0.5, 0.5, 0.5, 1) # Darker color to show active state
+	active_button.modulate = Color(0.5, 0.5, 0.5, 1) 
 	active_button.release_focus()
 
 func _on_pause_pressed():

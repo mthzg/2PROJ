@@ -57,7 +57,6 @@ func _on_load_game_pressed():
 			citizen_count = save_data.get("citizens", 0)
 			print("citizen_count on load:", citizen_count)
 
-			# Remove existing buildings if needed
 			for building in buildings:
 				building.queue_free()
 			buildings.clear()
@@ -75,7 +74,6 @@ func _on_load_game_pressed():
 				else:
 					print("⚠ Unknown building type:", type)
 
-			# Remove existing citizens before spawning new ones
 			for c in building_placement.get_children():
 				if "Citizen" in str(c):
 					c.queue_free()
@@ -91,10 +89,9 @@ func _on_load_game_pressed():
 
 
 func _on_save_game_pressed():
-	# Count citizens before saving
 	citizen_count = 0
 	for c in building_placement.get_children():
-		if "Citizen" in str(c):  # Adjust this check if needed
+		if "Citizen" in str(c): 
 			citizen_count += 1
 
 	var file := FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)

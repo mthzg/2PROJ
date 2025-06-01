@@ -38,19 +38,17 @@ var desired_wood_workers: int = 0
 
 
 func _ready():
-	# Pass self reference to terrain for resource access
 	hud_control.main_scene = self
-	terrain.main_game = self  # terrain script will have `var main_game` to hold this
+	terrain.main_game = self
 	terrain.connect("building_selected", hud_control.show_building_info_popup)
 	if has_node("Citizen"):
-		$Citizen.visible = false  # or $Citizen.visible = false
+		$Citizen.visible = false
 
 	for i in range(10):
 		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
 		total_citizens += 1
 		citizens.append(new_citizen)
 		new_citizen.main_game = self
-		#new_citizen.go_gather("tree")
 		
 
 	if clock.has_signal("time_updated"):
@@ -63,7 +61,7 @@ func get_current_ressource_worker(type: String):
 		return current_berry_workers
 
 func update_resource_capacity():
-	var house_count = terrain.houses.size()  # Adjust if your houses are stored differently
+	var house_count = terrain.houses.size()
 
 	max_wood = house_count * 5
 	max_berry = house_count * 5
@@ -110,7 +108,6 @@ func _on_time_updated(current_time: String) -> void:
 			continue
 		c.time_to_live -= 1
 		if c.time_to_live <= 0:
-			# If gathering, remove from their workplace counts
 			if c.is_gathering:
 				var res_type = c.current_ressource_type_to_gather
 				c.stop_gathering()
@@ -131,7 +128,6 @@ func _on_time_updated(current_time: String) -> void:
 			print("Citizen removed due to expired time_to_live")
 
 
-	# Spawn new citizens every 60 minutes (if under max)
 	if minute_counter_spawn >= 30:
 		minute_counter_spawn = 0
 		if total_citizens < max_citizens:
@@ -161,7 +157,6 @@ func check_sleep_cycle():
 		if not is_instance_valid(c):
 			continue
 
-		# Citizen is sleeping
 		if c.is_sleeping:
 			c.sleep_timer += 1
 			if c.sleep_timer >= 5:  # 5 in-game hours
@@ -275,7 +270,7 @@ func set_speed_multiplier(multiplier: float) -> void:
 	for c in citizens:
 		if is_instance_valid(c):
 			c.set_speed_multiplier(multiplier)
-			c.refresh_velocity()  # Optional if you want immediate effect
+			c.refresh_velocity() 
 
 func can_spend_wood(amount: int) -> bool:
 	return wood >= amount

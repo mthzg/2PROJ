@@ -95,9 +95,9 @@ func _ready():
 	for id in building_data.keys():
 		var data = building_data[id]
 		if data.get("unlocked") == true:
-			var texture = load(data["png"])  # Load the PNG as a Texture2D
-			var idx = item_list.add_icon_item(texture)  # Use icon only
-			item_list.set_item_metadata(idx, id)  # Attach ID to each item
+			var texture = load(data["png"]) 
+			var idx = item_list.add_icon_item(texture) 
+			item_list.set_item_metadata(idx, id) 
 		update_work_tab(get_real_workplaces())
 		
 	item_list.connect("item_activated", Callable(self, "_on_item_selected"))
@@ -108,23 +108,20 @@ func unlock_building_by_name(building_name: String) -> bool:
 		if building_data[id].get("name") == building_name:
 			if building_data[id]["unlocked"] == false:
 				building_data[id]["unlocked"] = true
-				# Add to UI if not already present
 				var texture = load(building_data[id]["png"])
 				var idx = item_list.add_icon_item(texture)
 				item_list.set_item_metadata(idx, id)
-				return true  # Successfully unlocked
+				return true  
 	print("Building not found: ", building_name)
-	return false  # Not found
+	return false 
 
 		
 func _on_item_selected(index: int):
 	var building_id = item_list.get_item_metadata(index)
 	var data = building_data[building_id]
 	
-	# For debugging, print cost:
 	print("Selected building cost: ", data.get("cost", {}))
 	
-	# Pass data including cost to terrain node
 	terrain_node.set_current_building(data)
 	
 func update_info_tab(wood: int, max_wood: int, berry: int, max_berry: int, water: int, max_water: int, total_citizens: int, max_citizens:int, occupied_slots: int, total_slots: int):
@@ -213,32 +210,28 @@ func _on_spinbox_value_changed(value: float, id: int):
 	var int_value = int(value)
 
 	if last_spinbox_values.has(id) and last_spinbox_values[id] == int_value:
-		return  # Value hasn't changed
+		return 
 
 	last_spinbox_values[id] = int_value
 
-	# Cancel any existing timer for this ID
 	if spinbox_timers.has(id):
 		spinbox_timers[id].queue_free()
 		spinbox_timers.erase(id)
 
-	# Create a new Timer node
+
 	var timer := Timer.new()
 	timer.wait_time = DEBOUNCE_DELAY
 	timer.one_shot = true
 	timer.autostart = true
 	add_child(timer)
 
-	# Bind timer's timeout to assign after delay
 	timer.connect("timeout", Callable(self, "_on_spinbox_delay_timeout").bind(id, int_value))
 
-	# Store it so we can cancel later
 	spinbox_timers[id] = timer
 
 func _on_spinbox_delay_timeout(id: int, value: int):
 	assign_workers_to_workplace(id, value)
 
-	# Clean up timer
 	if spinbox_timers.has(id):
 		spinbox_timers[id].queue_free()
 		spinbox_timers.erase(id)
@@ -290,7 +283,7 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 	if progress_bar:
 		progress_bar.visible = show_progress
 		if show_progress:
-			progress_bar.value = progress_value # 0.0 to 1.0, will fill up to 100%
+			progress_bar.value = progress_value 
 		else:
 			progress_bar.value = 0.0
 

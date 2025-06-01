@@ -6,13 +6,11 @@ var min_zoom := 1
 var max_zoom := 10.0
 
 func _ready():
-	# Set initial zoom on startup
 	zoom = Vector2(1.5, 1.5)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 
 func _unhandled_input(event):
-	# Drag camera with left click
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			dragging = event.pressed

@@ -1,7 +1,7 @@
 extends Node2D
 
 @onready var tilemap = get_node("../Terrain")
-@export var color: Color = Color(0, 0, 0, 1.0)  # Solid black
+@export var color: Color = Color(0, 0, 0, 1.0) 
 
 @export var map_width: int = 100
 @export var map_height: int = 100
@@ -11,10 +11,9 @@ func _draw():
 		print("test not found")
 		return
 
-	var cell_size = tilemap.tile_set.tile_size  # Vector2i
+	var cell_size = tilemap.tile_set.tile_size  
 	var map_size = Vector2i(map_width, map_height)
 
-	# Convert cell_size and map_size to Vector2 for multiplication
 	var total_size = Vector2(cell_size) * Vector2(map_size)
 	var offset = -total_size / 2.0
 

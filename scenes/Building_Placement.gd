@@ -8,13 +8,13 @@ signal building_selected(cell: Vector2i, building_data: Dictionary)
 @onready var hud_control = get_node("../CanvasLayer/Control")
 var citizen_scene := preload("res://scenes/Buildings/Citizen.tscn")
 
-var main_game  # reference to main script (set from main)
+var main_game  
 var tile_size: Vector2 = Vector2(16, 16)
 var occupied_cells = {}
 var road_positions: = {}
 var work_spot_cells = {}
 var citizen_house_position: Vector2i
-var buildings = {}  # Dictionary: building_instance -> array of Vector2i cells it occupies
+var buildings = {} 
 var greatfire_place: bool = false
 
 
@@ -27,8 +27,8 @@ var max_citizens = null
 var house_built_count = 0
 var free_house_limit = 5
 
-var houses = []  # List to track houses with their data (position, occupancy, assigned citizens)
-var unassigned_citizens = []  # Citizens waiting for house assignment
+var houses = []
+var unassigned_citizens = [] 
 
 
 
@@ -57,7 +57,6 @@ func spawn_30_trees():
 		var rand_y = randi() % map_bounds.size.y + map_bounds.position.y
 		var cell = Vector2i(rand_x, rand_y)
 
-		# Check if cell is free and valid
 		if occupied_cells.has(cell):
 			continue
 		
@@ -67,7 +66,6 @@ func spawn_30_trees():
 		if ground_tile == -1 or rocks_tile != -1 or water_tile != -1:
 			continue
 
-		# Directly place the tree building here
 		var tree_scene = preload("res://scenes/Buildings/Tree.tscn")
 		var instance = tree_scene.instantiate()
 		instance.set_meta("building_name", "Tree")
@@ -76,26 +74,22 @@ func spawn_30_trees():
 		add_child(instance)
 		occupied_cells[cell] = instance
 		buildings[instance] = [cell]
-		# Mark cell occupied and work spot for wood
-		#occupied_cells[cell] = "Tree"
 		work_spot_cells[cell] = {
 			"type": "tree",
 			"max_workers": 1,
 			"current_workers": 0,
-			"is_startup": true  # <<< THIS is the key
+			"is_startup": true  # 
 		}
 		
 
 		placed += 1
 
-# Call this in _ready
 func _ready():
 	spawn_30_trees()
 	
 
 
 func _input(event):
-	# Cancel placement with right click
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if is_ghost_active:
 			print("cancel placement")
@@ -149,7 +143,6 @@ func _draw():
 				var pos = (Vector2(ghost_cell.x, ghost_cell.y) * tile_size) + offset
 				draw_rect(Rect2(pos, tile_size), Color(0.2, 0.4, 1.0, 0.3), true)
 
-# Try place building with ID parameter, returns true if placement succeeded
 func try_place_building(cell: Vector2i) -> bool:
 	if current_building_data == null:
 		return false
@@ -172,12 +165,10 @@ func try_place_building(cell: Vector2i) -> bool:
 				print("❌ Cannot place; occupied at cell ", check_cell)
 				return false
 
-	# Copy cost so we can modify it safely
 	var base_cost = current_building_data.get("cost", {})
-	var cost = base_cost.duplicate(true)  # Deep copy to avoid mutating original data
+	var cost = base_cost.duplicate(true)  
 
 
-	# Apply "first 5 houses free" rule
 	if current_building_data.get("name") == "Small House" and house_built_count < free_house_limit:
 		cost["wood"] = 0
 		
@@ -190,7 +181,6 @@ func try_place_building(cell: Vector2i) -> bool:
 	if current_building_data.get("name") == "Greatfire":
 		if greatfire_place:
 			return false
-	# Check resources
 	if main_game != null:
 		for resource_name in cost.keys():
 			var amount = cost[resource_name]
@@ -199,10 +189,8 @@ func try_place_building(cell: Vector2i) -> bool:
 					print("❌ Not enough wood to place building!")
 					return false
 			else:
-				# You can add other resource checks here if needed
 				pass
 
-	# Deduct resources
 	if main_game != null:
 		for resource_name in cost.keys():
 			var amount = cost[resource_name]
@@ -227,7 +215,6 @@ func is_next_to_water(cell: Vector2i, size: Vector2i) -> bool:
 		for y in range(size.y):
 			var current_cell = cell + Vector2i(x, y)
 
-			# Check 8 neighbors around current cell
 			for dx in [-1, 0, 1]:
 				for dy in [-1, 0, 1]:
 					if dx == 0 and dy == 0:
@@ -253,7 +240,6 @@ func place_building(cell: Vector2i, size: Vector2i):
 	instance.global_position = ground_layer.to_global(local_pos)
 	add_child(instance)
 
-	# Track the instance and its occupied cells
 	buildings[instance] = []
 
 	for x in range(size.x):
@@ -335,7 +321,6 @@ func assign_houses_to_citizens():
 			var citizen = unassigned_citizens.pop_front()
 			house["assigned_citizens"].append(citizen)
 			
-			# Assign house position to citizen
 			if citizen.has_method("assign_house"):
 				citizen.assign_house(house["position"])
 
@@ -356,7 +341,6 @@ func spawn_citizens(speed_multiplier: float = 1.0):
 	)
 	citizen.global_position = spawn_position + offset
 
-	# Assign tilemaps and layers
 	citizen.terrain_tilemap = self
 	citizen.ground_layer = ground_layer
 	citizen.rocks_layer = rocks_layer
@@ -367,21 +351,17 @@ func spawn_citizens(speed_multiplier: float = 1.0):
 	citizen.citizen_house_position = spawn_cell
 	citizen.time_to_live = 300
 
-	# Apply speed multiplier
 	citizen.set_speed_multiplier(speed_multiplier)
 
 	add_child(citizen)
 
-	# Add citizen to unassigned list for house assignment
 	unassigned_citizens.append(citizen)
 
-	# Try assign house immediately in case a house exists
 	assign_houses_to_citizens()
 
 	return citizen
 
 
-# Optionally: add a method to change current building selection
 func set_current_building(building_data) -> void:
 	current_building_data = building_data
 	is_ghost_active = true
@@ -390,11 +370,9 @@ func set_current_building(building_data) -> void:
 
 func clear_buildings():
 	for child in get_children():
-		# Optionally skip non-building nodes like layers if needed
 		if child is Node2D and not child.name in ["Ground", "Rocks", "Water"]:
 			child.queue_free()
 
-	# Clear internal tracking dictionaries
 	occupied_cells.clear()
 	road_positions.clear()
 	work_spot_cells.clear()
@@ -416,22 +394,18 @@ func delete_building_at(cell: Vector2i) -> bool:
 
 	var occupied_cells_list = buildings[building_instance]
 
-	# Check if the building is a Greatfire and update the flag
 	if building_instance.get_meta("building_name") == "Greatfire":
 		print("here")
 		greatfire_place = false
 
 
-	# Remove occupied cells, work spots, road positions
 	for c in occupied_cells_list:
 		occupied_cells.erase(c)
 		work_spot_cells.erase(c)
 		road_positions.erase(c)
 
-	# Find the house that corresponds to this building's main cell (usually the first occupied cell)
 	for i in range(houses.size()):
 		if houses[i]["position"] == occupied_cells_list[0]:
-			# Unassign citizens from this house
 			for citizen in houses[i]["assigned_citizens"]:
 				unassigned_citizens.append(citizen)
 				if citizen.has_method("assign_house"):
@@ -440,11 +414,9 @@ func delete_building_at(cell: Vector2i) -> bool:
 			houses.remove_at(i)
 			break
 
-	# Remove the building node
 	if is_instance_valid(building_instance):
 		building_instance.queue_free()
 
-	# Remove from buildings dictionary
 	buildings.erase(building_instance)
 
 	print("✅ Deleted building at ", cell)
@@ -515,14 +487,13 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 						"current_workers": 0
 					}
 			if current_building_data != null and current_building_data.get("name") == "Wood Cutter":
-				if x == 0 and y == 0:  # only one cell gets the work spot
+				if x == 0 and y == 0:  
 					work_spot_cells[occupied_cell] = {
 						"type": "wood",
 						"max_workers": 5,
 						"current_workers": 0
 					}
 
-	# Apply occupancy if needed
 	var occupancy = building_data.get("occupancy", 0)
 	if occupancy > 0 and main_game:
 		main_game.increase_max_citizens(occupancy)

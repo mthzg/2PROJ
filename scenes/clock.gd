@@ -66,7 +66,7 @@ func set_speed(new_speed: Speed):
 	match speed:
 		Speed.PAUSE:
 			timer.stop()
-			return  # Skip multiplier update when paused
+			return 
 		Speed.PLAY:
 			wait_time = 1.0
 		Speed.FAST:
@@ -77,7 +77,7 @@ func set_speed(new_speed: Speed):
 	timer.wait_time = wait_time
 	timer.start()
 
-	# Call setter on all citizens
+
 	var multiplier = 1.0
 	if wait_time == 0.3:
 		multiplier = 2.5

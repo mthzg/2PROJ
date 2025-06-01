@@ -13,7 +13,7 @@ var time_to_live: int
 var speed: float = 50
 var _speed_multiplier: float = 1.0
 
-var main_game: Node = null  # Reference to main script to call increment_wood()
+var main_game: Node = null 
 
 var path: Array[Vector2i] = []
 var path_index := 0
@@ -29,21 +29,19 @@ var is_sleeping: bool = false
 var sleep_timer: int = 0
 var previous_resource_type: String = ""
 
-var house_position: Vector2i = Vector2i.ZERO  # default, not null
+var house_position: Vector2i = Vector2i.ZERO 
 
 var hunger: float = 1.0
 var thirst: float = 1.0
 var sleep: float = 1.0
 var berries: float = 1.0
-var birth_time: float = 0.0  # Use OS.get_unix_time() when spawned, or in-game time
+var birth_time: float = 0.0  
 
 func assign_house(house_pos: Vector2i):
 	house_position = house_pos
 	print("Citizen assigned to house at: ", house_pos)
 	go_home()
-	# If not already working or returning home, start gathering
-	#if not is_gathering and not is_returning_home and !has_gathered_resource:
-	#	go_gather("tree")
+
 
 func cleanup_before_removal():
 	# Remove from house
@@ -55,12 +53,10 @@ func cleanup_before_removal():
 					print("Citizen removed from house at", house_position)
 				break
 
-	# Decrement work spot workers if needed
 	if gather_target != Vector2i.ZERO and gather_target in work_spot_cells:
 		work_spot_cells[gather_target].current_workers = max(0, work_spot_cells[gather_target].current_workers - 1)
 		print("Decremented worker count at: ", gather_target)
 
-	# Reset all
 	house_position = Vector2i.ZERO
 	gather_target = Vector2i.ZERO
 	is_gathering = false
@@ -68,7 +64,6 @@ func cleanup_before_removal():
 	path.clear()
 	path_index = 0
 
-	# Reassign
 	if terrain_tilemap and terrain_tilemap.has_method("assign_houses_to_citizens"):
 		terrain_tilemap.assign_houses_to_citizens()
 
@@ -77,7 +72,6 @@ func cleanup_before_removal():
 
 
 
-# Getter function to access the private variable
 func get_speed_multiplier() -> float:
 	return _speed_multiplier
 
@@ -97,36 +91,29 @@ func refresh_velocity():
 	velocity = direction * speed * _speed_multiplier
 
 func get_movement_direction() -> Vector2:
-	# Prioritize path-following
 	if path.size() > 0 and path_index < path.size():
 		var target_cell = path[path_index]
 		var target_pos = terrain_tilemap.to_global(terrain_tilemap.map_to_local(target_cell))
 		var dir = (target_pos - global_position).normalized()
 
-		# Close enough to target tile, advance to next step
 		if global_position.distance_to(target_pos) < 4.0:
 			path_index += 1
 
-			# Reached final destination
 			if path_index >= path.size():
 				if is_returning_home:
 					is_returning_home = false
 
-					# Only give resource after returning home
 					if has_gathered_resource:
 						has_gathered_resource = false
 						if main_game and main_game.has_method("increment_wood"):
 							main_game.increment_wood(1)
 
-					## Start another task if needed
-					#go_gather("tree")
 
 				elif not is_gathering:
 					start_gathering()
 
 		return dir
 
-	# Idle fallback behavior
 	var local_pos = terrain_tilemap.to_local(global_position)
 	var cell = terrain_tilemap.local_to_map(local_pos)
 
@@ -253,7 +240,7 @@ func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 			if is_valid_tile(neighbor):
 				var movement_cost = 1.0
 				if is_on_road(neighbor):
-					movement_cost = 0.5  # Lower cost to prefer roads
+					movement_cost = 0.2
 
 				var tentative_g = g_score.get(current, INF) + movement_cost
 				if tentative_g < g_score.get(neighbor, INF):
