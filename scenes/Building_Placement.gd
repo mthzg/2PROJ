@@ -130,8 +130,6 @@ func _input(event):
 					data["work_spot"] = work_spot_cells[clicked_cell]
 				emit_signal("building_selected", clicked_cell, data)
 
-			
-
 
 func _process(_delta):
 	if is_ghost_active:

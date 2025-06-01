@@ -285,3 +285,9 @@ func increment_berry(amount: int):
 func increase_max_citizens(amount: int = 1) -> void:
 	max_citizens += amount
 	print("max_citizens increased to:", max_citizens)
+	
+	
+func _on_citizen_clicked(citizen):
+	var popup = $CanvasLayer/Control/CitizenInfoPopup
+	popup.show_citizen_info(citizen)
+	popup.popup_centered()

@@ -246,44 +246,31 @@ func assign_workers_to_workplace(id: int, new_max: int):
 func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 	var popup = $BuildingInfoPopup
 	var label = popup.get_node("VBox/InfoLabel")
+	var progress_bar = popup.get_node("VBox/ProgressBar")
 	var info_text = ""
-
-	# Always show name
 	info_text += "Building: %s\n" % building_data.get("name", "Unknown")
-	info_text += "Size: %s\n" % str(building_data.get("size", ""))
 
-	# Show cost if any
-	if building_data.has("cost") and building_data.cost.size() > 0:
-		var cost_strs = []
-		for k in building_data.cost.keys():
-			cost_strs.append("%s: %d" % [k.capitalize(), building_data.cost[k]])
-		info_text += "Cost: %s\n" % ", ".join(cost_strs)
+	var show_progress = false
+	var progress_value = 0.0
 
-	# Show workplace info
-	var name = building_data.get("name", "")
-	var workplace_buildings = ["Berry Picker", "Tree", "Water Workers Hut", "Wood Cutter"]
-
-	if workplace_buildings.has(name) and building_data.has("work_spot"):
+	if building_data.has("work_spot"):
 		var ws = building_data["work_spot"]
 		info_text += "Type: %s\n" % ws.get("type", "N/A")
 		info_text += "Workers: %d / %d\n" % [ws.get("current_workers", 0), ws.get("max_workers", 0)]
 		if ws.get("type") == "berry":
-			var per_hour = ws.get("current_workers", 0) * 10
+			var berries_per_worker_per_hour = 10
+			var per_hour = ws.get("current_workers", 0) * berries_per_worker_per_hour
 			info_text += "Berry output/hour: %d\n" % per_hour
-		# --- Tree progress bar addition ---
-		if name == "Tree":
-			var progress_bar = popup.get_node("VBox/ProgressBar") if popup.has_node("VBox/ProgressBar") else null
-			if progress_bar:
-				progress_bar.visible = true
-				var progress = ws.get("cut_progress", 0.0)
-				progress_bar.value = progress
-				info_text += "Tree Cut Progress:\n"
-			else:
-				info_text += "Tree Cut Progress: (missing ProgressBar node)\n"
-	else:
-		# Hide progress bar if not a tree
-		if popup.has_node("VBox/ProgressBar"):
-			popup.get_node("VBox/ProgressBar").visible = false
+		if ws.get("type") == "tree" and ws.has("cut_progress"):
+			show_progress = true
+			progress_value = ws["cut_progress"]
+
+	if progress_bar:
+		progress_bar.visible = show_progress
+		if show_progress:
+			progress_bar.value = progress_value # 0.0 to 1.0, will fill up to 100%
+		else:
+			progress_bar.value = 0.0
 
 	label.text = info_text
 	popup.popup_centered()

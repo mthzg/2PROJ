@@ -31,6 +31,12 @@ var previous_resource_type: String = ""
 
 var house_position: Vector2i = Vector2i.ZERO  # default, not null
 
+var hunger: float = 1.0
+var thirst: float = 1.0
+var sleep: float = 1.0
+var berries: float = 1.0
+var birth_time: float = 0.0  # Use OS.get_unix_time() when spawned, or in-game time
+
 func assign_house(house_pos: Vector2i):
 	house_position = house_pos
 	print("Citizen assigned to house at: ", house_pos)
@@ -192,13 +198,19 @@ func start_gathering():
 	is_gathering = true
 	if current_ressource_type_to_gather == "tree":
 		var gather_time = 5.0 / _speed_multiplier
-		await get_tree().create_timer(gather_time).timeout
-	
-		# Delete tree at gather_target
+		var elapsed := 0.0
+		if work_spot_cells.has(gather_target):
+			work_spot_cells[gather_target]["cut_progress"] = 0.0
+		while elapsed < gather_time:
+			await get_tree().process_frame
+			var dt = get_process_delta_time()
+			elapsed += dt
+			if work_spot_cells.has(gather_target):
+				work_spot_cells[gather_target]["cut_progress"] = clamp(elapsed / gather_time, 0.0, 1.0)
+		if work_spot_cells.has(gather_target):
+			work_spot_cells[gather_target]["cut_progress"] = 1.0
 		if terrain_tilemap and terrain_tilemap.has_method("delete_building_at"):
 			terrain_tilemap.delete_building_at(gather_target)
-	
-		# Instead of giving wood here, go home first
 		is_gathering = false
 		has_gathered_resource = true
 		stop_gathering()
@@ -259,3 +271,13 @@ func reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2
 		current = came_from[current]
 		total_path.insert(0, current)
 	return total_path
+	
+func _input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if main_game and main_game.has_method("show_citizen_popup"):
+			main_game.show_citizen_popup(self)
+			
+
+
+func get_age_seconds() -> int:
+	return int(Time.get_unix_time_from_system() - birth_time)
