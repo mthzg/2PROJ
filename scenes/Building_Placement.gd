@@ -259,7 +259,7 @@ func place_building(cell: Vector2i, size: Vector2i):
 	for x in range(size.x):
 		for y in range(size.y):
 			var occupied_cell = cell + Vector2i(x, y)
-			occupied_cells[occupied_cell] = instance
+			occupied_cells[occupied_cell] = current_building_data.get("name", "")
 			buildings[instance].append(occupied_cell)
 
 			if current_building_data.get("name") == "Dirt road":
@@ -344,6 +344,8 @@ func assign_houses_to_citizens():
 func spawn_citizens(speed_multiplier: float = 1.0):
 	var spawn_cell = Vector2i(-1, -6)
 	var spawn_position: Vector2 = ground_layer.to_global(ground_layer.map_to_local(spawn_cell))
+	var citizen_instance = citizen_scene.instantiate()
+	get_tree().current_scene.add_child(citizen_instance)
 
 	var citizen = citizen_scene.instantiate()
 
@@ -497,21 +499,21 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 					"current_workers": 0
 				}
 				
-			if building_data.get("name") == "Berry Picker":
+			if current_building_data != null and building_data.get("name") == "Berry Picker":
 				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
 						"type": "berry",
 						"max_workers": 5,
 						"current_workers": 0
 					}	
-			if current_building_data.get("name") == "Water Workers Hut":
+			if current_building_data != null and current_building_data.get("name") == "Water Workers Hut":
 				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
 						"type": "water",
 						"max_workers": 5,
 						"current_workers": 0
 					}
-			if current_building_data.get("name") == "Wood Cutter":
+			if current_building_data != null and current_building_data.get("name") == "Wood Cutter":
 				if x == 0 and y == 0:  # only one cell gets the work spot
 					work_spot_cells[occupied_cell] = {
 						"type": "wood",

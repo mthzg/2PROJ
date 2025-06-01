@@ -42,6 +42,8 @@ func _ready():
 	hud_control.main_scene = self
 	terrain.main_game = self  # terrain script will have `var main_game` to hold this
 	terrain.connect("building_selected", hud_control.show_building_info_popup)
+	if has_node("Citizen"):
+		$Citizen.visible = false  # or $Citizen.visible = false
 
 	for i in range(10):
 		var new_citizen = terrain.spawn_citizens(current_speed_multiplier)
@@ -318,3 +320,17 @@ func show_citizen_popup(citizen):
 	var popup = $CanvasLayer/Control/CitizenInfoPopup
 	popup.show_citizen_info(citizen)
 	popup.popup_centered()
+	
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var pos = get_viewport().get_mouse_position()
+		for c in citizens:
+			if c and c.has_node("CollisionShape2D"):
+				var shape = c.get_node("CollisionShape2D").shape
+				var to_local = c.to_local(pos)
+				if shape and shape is RectangleShape2D:
+					var extents = shape.extents
+					if abs(to_local.x) < extents.x and abs(to_local.y) < extents.y:
+						print("Clicked citizen via manual check!")
+						c._input_event(get_viewport(), event, 0)
+						break

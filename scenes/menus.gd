@@ -98,12 +98,28 @@ func _on_save_game_pressed():
 			"buildings": []
 		}
 
+		var already_saved = {}
 		for cell in building_placement.occupied_cells:
 			var name = building_placement.occupied_cells[cell]
-			save_data["buildings"].append({
-				"type": name,
-				"cell": cell
-			})
+			# Make sure to extract name if it's an object
+			if typeof(name) == TYPE_OBJECT and name.has_meta("building_name"):
+				name = name.get_meta("building_name")
+			var building_data = building_placement.get_building_data_from_name(name)
+			if building_data:
+				var size = building_data.get("size", Vector2i(1, 1))
+				var is_origin = true
+				for dx in range(size.x):
+					for dy in range(size.y):
+						var candidate = cell - Vector2i(dx, dy)
+						if (dx > 0 or dy > 0) and building_placement.occupied_cells.get(candidate, "") == name:
+							is_origin = false
+				if is_origin and not already_saved.has(cell):
+					save_data["buildings"].append({
+						"type": name,
+						"cell": cell
+					})
+					already_saved[cell] = true
+
 		file.store_var(save_data)
 		print("Game saved:", save_data)
 

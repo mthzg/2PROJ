@@ -18,7 +18,6 @@ anchors_preset = 0
 script = ExtResource("1_6fi6k")
 
 [node name="CitizenInfoPopup" parent="Control" instance=ExtResource("6_047uy")]
-visible = false
 
 [node name="BuildingInfoPopup" type="PopupPanel" parent="Control"]
 

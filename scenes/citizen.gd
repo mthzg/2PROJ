@@ -287,7 +287,9 @@ func reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2
 	return total_path
 	
 func _input_event(viewport, event, shape_idx):
+	print("input event triggered!", event)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		print("left click detected")
 		if main_game and main_game.has_method("show_citizen_popup"):
 			main_game.show_citizen_popup(self)
 			
