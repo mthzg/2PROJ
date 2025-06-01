@@ -21,6 +21,7 @@ GameClock="*res://GameClock.gd"
 Herlper="*res://Helper.gd"
 GameSave="*res://GameSave.gd"
 GameRessources="*res://GameRessources.gd"
+NotificationPrint="*res://NotificationPrint.gd"
 
 [display]
 
