@@ -1,31 +1,74 @@
-# 2PROJ
 
-#### étapes
+# 🌆 City Builder - Godot 4.4
 
-1- création de la Tilemap en 3 noeuds (Ground, Water, Rocks)
-2- Gestion des mouvement de la caméra
-3- Création d'un HUD pour sélection de batiments:
-    #todo fix le hud en fullscreen (mauvaise position)
-4- gestion dynamique de la taille d'un batiment
-5- Placement des batiments
-    #todo ajouter tous les batiments du jeu
+Ce jeu de gestion/simulation a été réalisé avec **Godot 4.4**. Le joueur doit développer une civilisation en gérant ses ressources, ses citoyens, et son urbanisme pour construire une ville prospère.
 
+---
 
-#not done
+## 🎯 Objectifs du jeu
 
-6- Création d'une interface de visualisation de stock avec des incrementer et decrementer qui prennent (x: int value)
-    
-7- création des citoyens    
-    -incréement de population_max à chaque maison placé
-    -besoins d'une maison : 
-        small_house: 0 needs
-        medium_house: wood, berries
-        etc...
-    -si une besoin à besoin d'une ressource on envoi un citoyen vers la source de tel besoin
-    -si aucun besoin envoi d'un citoyen vers batiment en construction
+- 🏙 **Développer votre civilisation**  
+- 🪵 **Produire le plus de ressources possible** (bois, eau, baies, etc.)  
+- 🧱 **Étendre et optimiser votre ville** grâce à une gestion stratégique des bâtiments et des citoyens
 
-    -un citoyen à barre de soif, faim, fatigue (soif si eau pas débloqué, fatigue si lit débloqué)
-    chaque ressource sera consommé dans la maison
-    pour 5min passé en décrémente de 1 tous les besoins
+---
 
+## 🕹 Fonctionnement
 
+1. **Placement du Great Fire 🔥**  
+   Le jeu commence par la construction obligatoire d’un *Great Fire*. Celui-ci est le cœur de la civilisation.
+
+2. **Maisons gratuites 🏠**  
+   Une fois le *Great Fire* placé, vous débloquez la possibilité de construire jusqu'à **5 maisons gratuitement**.
+
+3. **Déblocage des ateliers 🔨**  
+   Après avoir construit les maisons, vous débloquez les bâtiments de production (Wood Cutter, Berry Picker, Water Workers Hut...).
+
+4. **Gestion des travailleurs 👷**  
+   Dans l'onglet **Work Tab**, vous pouvez définir combien de citoyens doivent travailler sur chaque type de ressource.
+
+5. **Contrôle du temps ⏩**  
+   Le temps peut être accéléré à l’aide des **flèches situées en haut à droite** de l’écran.
+
+---
+
+## 🔁 Cycle de vie du jeu
+
+- **Échelle de temps**  
+  - `1 seconde réelle = 1 minute en jeu`
+
+- **Apparition des citoyens**  
+  - Un nouveau citoyen apparaît **toutes les 30 minutes en jeu**, à condition qu’il y ait de la place dans une maison.
+
+- **Durée de vie des citoyens**  
+  - Un citoyen vit **5 heures en jeu**.
+
+- **Cycle de travail et repos**  
+  - Après **19 heures de travail**, un citoyen rentre à la maison pour **se reposer et se nourrir**.  
+  - Si des ressources comme **l’eau ou les baies** sont disponibles, sa durée de vie est prolongée.
+
+- **Fin de vie et remplacement**  
+  - Lorsqu’un citoyen meurt, il est automatiquement retiré de son lieu de travail.  
+  - S’il y a d'autres citoyens disponibles, un nouveau prend sa place.
+
+---
+
+## ⚙️ Dépendances
+
+- Ce jeu a été développé sur **Godot Engine 4.4**.
+- Toutes les scènes, scripts, et assets sont gérés directement depuis le projet Godot.
+
+---
+
+## 📦 À venir (idées de futures fonctionnalités)
+
+- Gestion avancée de la nourriture et de l’eau potable  
+- Niveaux de bonheur ou d'efficacité des citoyens  
+- Commerce entre villes ou événements aléatoires  
+- Interface utilisateur améliorée pour la gestion de la population  
+
+---
+
+## 👨‍💻 Auteur
+
+Ce projet a été développé par [TonNom], dans le cadre d’un apprentissage ou projet personnel autour de la simulation de civilisation avec Godot.
