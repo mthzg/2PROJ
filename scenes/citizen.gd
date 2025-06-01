@@ -133,7 +133,7 @@ func get_movement_direction() -> Vector2:
 	if is_over_water(cell):
 		return Vector2.ZERO
 	elif is_on_road(cell) or occupied_cells.has(cell):
-		return Vector2.RIGHT
+		return Vector2.ZERO
 	else:
 		return Vector2.ZERO
 
