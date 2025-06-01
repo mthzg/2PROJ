@@ -22,6 +22,7 @@ var building_data = {
 	1: {
 		"name": "Eraser", 
 		"png":"res://Assets/eraser.png", 
+		"unlocked": true
 	},
 	2: {
 		"name": "Small House", 

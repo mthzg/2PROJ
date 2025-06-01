@@ -15,6 +15,7 @@ var road_positions: = {}
 var work_spot_cells = {}
 var citizen_house_position: Vector2i
 var buildings = {}  # Dictionary: building_instance -> array of Vector2i cells it occupies
+var greatfire_place: bool = false
 
 
 var ghost_cell = Vector2i.ZERO
@@ -184,7 +185,11 @@ func try_place_building(cell: Vector2i) -> bool:
 		if not is_next_to_water(cell, size):
 			print("❌ Water Workers Hut must be placed next to water!")
 			return false
-			
+	
+	
+	if current_building_data.get("name") == "Greatfire":
+		if greatfire_place:
+			return false
 	# Check resources
 	if main_game != null:
 		for resource_name in cost.keys():
@@ -292,6 +297,9 @@ func place_building(cell: Vector2i, size: Vector2i):
 					}
 	if current_building_data.get("name") == "Greatfire":
 		hud_control.unlock_building_by_name("Small House")
+		greatfire_place = true
+		call_unassigned_citizens_to_greatfire(cell)
+
 	
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
@@ -314,6 +322,10 @@ func place_building(cell: Vector2i, size: Vector2i):
 		main_game.increase_max_citizens(occupancy)
 
 		
+func call_unassigned_citizens_to_greatfire(greatfire_position: Vector2i):
+	for citizen in unassigned_citizens:
+		if citizen.has_method("go_to_greatfire"):
+			citizen.go_to_greatfire(greatfire_position)
 
 
 func assign_houses_to_citizens():
@@ -401,6 +413,12 @@ func delete_building_at(cell: Vector2i) -> bool:
 
 	var occupied_cells_list = buildings[building_instance]
 
+	# Check if the building is a Greatfire and update the flag
+	if building_instance.get_meta("building_name") == "Greatfire":
+		print("here")
+		greatfire_place = false
+
+
 	# Remove occupied cells, work spots, road positions
 	for c in occupied_cells_list:
 		occupied_cells.erase(c)
@@ -412,10 +430,7 @@ func delete_building_at(cell: Vector2i) -> bool:
 		if houses[i]["position"] == occupied_cells_list[0]:
 			# Unassign citizens from this house
 			for citizen in houses[i]["assigned_citizens"]:
-				# Add citizen back to unassigned list
 				unassigned_citizens.append(citizen)
-
-				# Also, clear the citizen's assigned house property if applicable
 				if citizen.has_method("assign_house"):
 					citizen.assign_house(Vector2i.ZERO)
 
@@ -431,10 +446,10 @@ func delete_building_at(cell: Vector2i) -> bool:
 
 	print("✅ Deleted building at ", cell)
 
-	# Optionally, try re-assigning houses to citizens
 	assign_houses_to_citizens()
 
 	return true
+
 
 
 

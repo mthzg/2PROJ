@@ -225,6 +225,15 @@ func go_home():
 	path = find_path(start_cell, house_position)
 	path_index = 0
 
+func go_to_greatfire(position: Vector2i):
+	is_gathering = false
+	is_returning_home = false
+	var local_pos = terrain_tilemap.to_local(global_position)
+	var start_cell = terrain_tilemap.local_to_map(local_pos)
+	path = find_path(start_cell, position)
+	path_index = 0
+
+
 
 func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 	var open_set = [start]
