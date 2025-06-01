@@ -17,6 +17,9 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_6fi6k")
 
+[node name="CitizenInfoPopup" parent="Control" instance=ExtResource("6_047uy")]
+visible = false
+
 [node name="BuildingInfoPopup" type="PopupPanel" parent="Control"]
 
 [node name="VBox" type="VBoxContainer" parent="Control/BuildingInfoPopup"]
@@ -173,5 +176,3 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 grow_horizontal = 1
 grow_vertical = 1
-
-[node name="CitizenInfoPopup" parent="Control" instance=ExtResource("6_047uy")]
