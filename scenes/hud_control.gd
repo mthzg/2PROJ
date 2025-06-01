@@ -262,11 +262,64 @@ func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 	var popup = $BuildingInfoPopup
 	var label = popup.get_node("VBox/InfoLabel")
 	var progress_bar = popup.get_node("VBox/ProgressBar")
+	var population_label = popup.get_node("VBox/PopulationLabel")
+	var hunger_bar = popup.get_node("VBox/HungerBar")
+	var thirst_bar = popup.get_node("VBox/ThirstBar")
+	var sleep_bar = popup.get_node("VBox/SleepBar")
+	var berry_bar = popup.get_node("VBox/BerryBar")
+	var greatfire_bar = popup.get_node("VBox/GreatFireBar")
+
+	# Hide all new widgets by default
+	population_label.visible = false
+	hunger_bar.visible = false
+	thirst_bar.visible = false
+	sleep_bar.visible = false
+	berry_bar.visible = false
+	greatfire_bar.visible = false
+
 	var info_text = ""
 	info_text += "Building: %s\n" % building_data.get("name", "Unknown")
 
 	var show_progress = false
 	var progress_value = 0.0
+
+	# HOUSE LOGIC
+	if building_data.get("name", "") == "Small House":
+		population_label.visible = true
+		hunger_bar.visible = true
+		thirst_bar.visible = true
+		sleep_bar.visible = true
+		berry_bar.visible = true
+		greatfire_bar.visible = true
+
+		# Show population
+		var assigned_citizens = building_data.get("assigned_citizens", [])
+		var max_occupancy = building_data.get("occupancy", 2)
+		population_label.text = "Population: %d/%d" % [assigned_citizens.size(), max_occupancy]
+
+		# Average citizen stats for progress bars (if any assigned)
+		var hunger = 0.0
+		var thirst = 0.0
+		var sleep = 0.0
+		var berry = 0.0
+		var greatfire = 0.0
+		if assigned_citizens.size() > 0:
+			for c in assigned_citizens:
+				hunger += c.hunger
+				thirst += c.thirst
+				sleep += c.sleep
+				berry += c.berries
+
+			hunger /= assigned_citizens.size()
+			thirst /= assigned_citizens.size()
+			sleep /= assigned_citizens.size()
+			berry /= assigned_citizens.size()
+			greatfire /= assigned_citizens.size()
+		hunger_bar.value = hunger
+		thirst_bar.value = thirst
+		sleep_bar.value = sleep
+		berry_bar.value = berry
+		greatfire_bar.value = greatfire
 
 	if building_data.has("work_spot"):
 		var ws = building_data["work_spot"]
