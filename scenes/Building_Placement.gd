@@ -5,6 +5,7 @@ signal building_selected(cell: Vector2i, building_data: Dictionary)
 @onready var ground_layer := get_node("Ground")
 @onready var rocks_layer := get_node("Rocks")
 @onready var water_layer := get_node("Water")
+@onready var hud_control = get_node("../CanvasLayer/Control")
 var citizen_scene := preload("res://scenes/Buildings/Citizen.tscn")
 
 var main_game  # reference to main script (set from main)
@@ -136,6 +137,7 @@ func _process(_delta):
 		var mouse_pos = get_global_mouse_position()
 		ghost_cell = ground_layer.local_to_map(ground_layer.to_local(mouse_pos))
 		self.queue_redraw()
+		
 
 func _draw():
 	if is_ghost_active and ghost_cell != null and current_building_data != null:
@@ -263,8 +265,8 @@ func place_building(cell: Vector2i, size: Vector2i):
 					"type": "tree",
 					"max_workers": 1,
 					"current_workers": 0
-				}
-
+				}					
+			
 			if current_building_data.get("name") == "Water Workers Hut":
 				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
@@ -288,7 +290,9 @@ func place_building(cell: Vector2i, size: Vector2i):
 						"max_workers": 5,
 						"current_workers": 0
 					}
-
+	if current_building_data.get("name") == "Greatfire":
+		hud_control.unlock_building_by_name("Small House")
+	
 	if current_building_data.get("name") == "Small House":
 		house_built_count += 1
 		houses.append({
@@ -298,6 +302,14 @@ func place_building(cell: Vector2i, size: Vector2i):
 		})
 		assign_houses_to_citizens()
 
+	if house_built_count == 5:
+		hud_control.unlock_building_by_name("Wood Cutter")
+		hud_control.unlock_building_by_name("Tree")
+		hud_control.unlock_building_by_name("Berry Picker")
+		hud_control.unlock_building_by_name("Berry Bush")
+		hud_control.unlock_building_by_name("Water Workers Hut")
+		
+		
 	if occupancy > 0 and main_game != null:
 		main_game.increase_max_citizens(occupancy)
 

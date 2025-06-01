@@ -282,7 +282,6 @@ func increment_time_to_live(counter: int):
 		time_to_live += 5
 	elif counter == 2:
 		time_to_live += 10
-	print("new time to live = ", time_to_live)
 	
 	
 

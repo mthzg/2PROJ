@@ -53,7 +53,7 @@ current_tab = 0
 
 [node name="ItemList" type="ItemList" parent="Control/TabContainer"]
 layout_mode = 2
-max_columns = 7
+max_columns = 10
 same_column_width = true
 icon_mode = 0
 metadata/_tab_index = 0
