@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://tmkl57mkdmtd"]
+
+[ext_resource type="Texture2D" uid="uid://bjhtgv2qpymc1" path="res://Assets/Research.png" id="1_fokdl"]
+
+[node name="Research" type="Sprite2D"]
+texture = ExtResource("1_fokdl")
+offset = Vector2(8, 8)

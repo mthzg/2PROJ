@@ -265,7 +265,15 @@ func place_building(cell: Vector2i, size: Vector2i):
 						"max_workers": 5,
 						"current_workers": 0
 					}
-
+			
+			if current_building_data.get("name") == "Research hut":
+				if x == 0 and y == 0:
+					work_spot_cells[occupied_cell] = {
+						"type": "research",
+						"max_workers": 5,
+						"current_workers": 0
+					}
+					
 			if current_building_data.get("name") == "Berry Picker":
 				if x == 0 and y == 0:
 					work_spot_cells[occupied_cell] = {
@@ -302,6 +310,7 @@ func place_building(cell: Vector2i, size: Vector2i):
 		hud_control.unlock_building_by_name("Berry Picker")
 		hud_control.unlock_building_by_name("Berry Bush")
 		hud_control.unlock_building_by_name("Water Workers Hut")
+		hud_control.unlock_building_by_name("Research hut")
 		
 		
 	if occupancy > 0 and main_game != null:
@@ -486,6 +495,15 @@ func place_building_direct(cell: Vector2i, building_data: Dictionary) -> void:
 						"max_workers": 5,
 						"current_workers": 0
 					}
+					
+			if current_building_data != null and current_building_data.get("name") == "Research hut":
+				if x == 0 and y == 0:
+					work_spot_cells[occupied_cell] = {
+						"type": "researh",
+						"max_workers": 5,
+						"current_workers": 0
+					}
+					
 			if current_building_data != null and current_building_data.get("name") == "Wood Cutter":
 				if x == 0 and y == 0:  
 					work_spot_cells[occupied_cell] = {
@@ -547,6 +565,12 @@ func get_building_data_from_name(name: String) -> Dictionary:
 		"Water Workers Hut": {
 			"name": "Water Workers Hut",
 			"scene": preload("res://scenes/Buildings/WaterWorkersHut.tscn"),
+			"size": Vector2i(2, 2),
+			"cost": {"wood": 10}
+		},
+		"Research hut": {
+			"name": "researh",
+			"scene": preload("res://scenes/Buildings/Research.tscn"),
 			"size": Vector2i(2, 2),
 			"cost": {"wood": 10}
 		}

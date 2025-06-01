@@ -157,7 +157,8 @@ func go_gather(resource_type: String) -> bool:
 	var nearest := Vector2i.ZERO
 	var found := false
 	var min_distance := INF
-
+	print(resource_type)
+	print(work_spot_cells)
 	for target_cell in work_spot_cells.keys():
 		var data = work_spot_cells[target_cell]
 		if (data.type == resource_type and data.current_workers < data.max_workers):

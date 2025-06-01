@@ -12,7 +12,7 @@ var minute_counter_collect_ressource := 0
 var total_citizens: int = 0
 var max_citizens: int 
 var citizens := []
-var wood: int = 0
+var wood: int = 100
 var max_wood: int = 0
 
 var berry: int = 0
@@ -21,6 +21,7 @@ var max_berry: int = 0
 var water: int = 0
 var max_water: int = 0
 
+var research_points: int = 0
 
 var berry_bushes: Array
 
@@ -35,6 +36,9 @@ var desired_water_workers: int = 0
 
 var current_wood_workers: int = 0
 var desired_wood_workers: int = 0
+
+var current_research_workers: int = 0
+var desired_research_workers: int = 0
 
 
 func _ready():
@@ -97,6 +101,12 @@ func _on_time_updated(current_time: String) -> void:
 		assign_citizens_to_gather("wood", delta_wood)
 	elif delta_wood < 0:
 		remove_citizens_from_gathering("wood", -delta_wood)
+		
+	var delta_research = desired_research_workers - current_research_workers
+	if delta_research > 0:
+		assign_citizens_to_gather("research", delta_research)
+	elif delta_research < 0:
+		remove_citizens_from_gathering("research", -delta_research)
 
 		
 	# Manage citizens time_to_live:
@@ -119,6 +129,8 @@ func _on_time_updated(current_time: String) -> void:
 					current_water_wokers = max(0, current_water_wokers - 1)
 				elif res_type == "wood":
 					current_wood_workers = max(0, current_wood_workers - 1)
+				elif res_type == "researh":
+					current_research_workers = max(0, current_research_workers - 1)
 					
 			
 			c.cleanup_before_removal()
@@ -146,6 +158,7 @@ func _on_time_updated(current_time: String) -> void:
 		increment_berry(current_berry_workers)
 		increment_wood(current_wood_workers)
 		increment_water(current_water_wokers)
+		increment_research(current_research_workers)
 		
 			
 	check_sleep_cycle()
@@ -177,6 +190,8 @@ func check_sleep_cycle():
 					current_water_wokers = max(0, current_water_wokers - 1)
 				elif c.current_ressource_type_to_gather == "wood":
 					current_wood_workers = max(0, current_wood_workers - 1)
+				elif c.current_ressource_type_to_gather == "research":
+					current_research_workers = max(0, current_research_workers -1)
 				c.is_sleeping = true
 				var consumed_ressources: int = 0
 				consumed_ressources = consume_ressources()
@@ -218,6 +233,8 @@ func remove_citizens_from_gathering(resource_type: String, max_to_remove: int) -
 				current_water_wokers -= 1 
 			elif resource_type == "wood":
 				current_wood_workers -= 1 
+			elif resource_type == "researh":
+				current_research_workers -= 1
 
 	print("Removed %d citizens from gathering %s" % [removed, resource_type])
 
@@ -233,10 +250,12 @@ func set_desired_water_workers(value: int):
 func set_desired_wood_workers(value: int):
 	desired_wood_workers = value
 
+func set_desired_research_workers(value: int):
+	desired_research_workers = value
+	
 	
 func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> void:
 	var assigned = 0
-
 	for c in citizens:
 		if assigned >= max_to_assign:
 			break
@@ -247,6 +266,7 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 
 		var success = c.go_gather(resource_type)
 		if success:
+			print("here")
 			assigned += 1
 
 			match resource_type:
@@ -259,6 +279,8 @@ func assign_citizens_to_gather(resource_type: String, max_to_assign: int) -> voi
 					current_water_wokers += 1
 				"wood":
 					current_wood_workers += 1
+				"researh":
+					current_research_workers += 1
 
 
 		
@@ -304,6 +326,16 @@ func spend_water(amount: int) -> void:
 func increment_water(amount: int):
 	if water + amount <= max_water:
 		water += amount
+		
+func can_spend_research(amount: int) -> bool:
+	return research_points >= amount
+
+func spend_research(amount: int) -> void:
+	research_points -= amount
+	print("research spent:", amount, " Remaining research:", research_points)
+
+func increment_research(amount: int):
+		research_points += amount
 
 func increase_max_citizens(amount: int = 1) -> void:
 	max_citizens += amount

@@ -92,6 +92,14 @@ var building_data = {
 		"cost": {"wood": 15},
 		"unlocked": false
 	},
+	10: {
+		"name": "Research hut", 
+		"scene": preload("res://scenes/Buildings/Research.tscn"), 
+		"png":"res://Assets/Research.png", 
+		"size": Vector2i(2, 2),
+		"cost": {"wood": 10},
+		"unlocked": false
+	},
 }
 
 func _ready():
@@ -130,11 +138,11 @@ func _on_item_selected(index: int):
 	
 	terrain_node.set_current_building(data)
 	
-func update_info_tab(wood: int, max_wood: int, berry: int, max_berry: int, water: int, max_water: int, total_citizens: int, max_citizens:int, occupied_slots: int, total_slots: int):
+func update_info_tab(wood: int, max_wood: int, berry: int, max_berry: int, water: int, max_water: int, research_points: int, total_citizens: int, max_citizens:int, occupied_slots: int, total_slots: int):
 	wood_label.text = "Total wood: %d / %d" % [wood, max_wood]
 	berry_label.text = "Total berry: %d / %d" % [berry, max_berry]
 	water_label.text = "Total water: %d / %d" % [water, max_water]
-	search_label.text = "Total Research Points: %d / %d" % [0, 0]
+	search_label.text = "Total Research Points: %d" % [research_points]
 	
 	
 	pop_label.text = "Population: %d / %d" % [total_citizens, max_citizens]
@@ -155,12 +163,13 @@ func _process(delta):
 	var max_berry = main_scene.max_berry
 	var water = main_scene.water
 	var max_water = main_scene.max_water
+	var research_points = main_scene.research_points
 	
 	var total_citizens = main_scene.total_citizens
 	var max_citizens = main_scene.max_citizens
 	var occupied = total_citizens
 	var total_slots = main_scene.max_citizens
-	update_info_tab(wood, max_wood, berry, max_berry, water, max_water,total_citizens, max_citizens, occupied, total_slots)
+	update_info_tab(wood, max_wood, berry, max_berry, water, max_water, research_points, total_citizens, max_citizens, occupied, total_slots)
 
 func get_real_workplaces() -> Array:
 	if not main_scene:
@@ -172,7 +181,9 @@ func get_real_workplaces() -> Array:
 		1: {"name": "Berry Picker", "type": "berry"},
 		2: {"name": "Tree", "type": "tree"},
 		3: {"name": "Water Workers Hut", "type": "water"},
-		4: {"name": "Wood Cutter", "type": "wood"}
+		4: {"name": "Wood Cutter", "type": "wood"},
+		5: {"name": "Research hut", "type": "researh"}
+		
 		
 	}
 
@@ -250,7 +261,8 @@ func assign_workers_to_workplace(id: int, new_max: int):
 		1: "berry",
 		2: "tree",
 		3: "water",
-		4: "wood"
+		4: "wood",
+		5: "researh"
 	}
 
 	if not workplace_types.has(id):
@@ -265,6 +277,8 @@ func assign_workers_to_workplace(id: int, new_max: int):
 		main_scene.set_desired_water_workers(new_max)
 	elif resource_type == "wood":
 		main_scene.set_desired_wood_workers(new_max)
+	elif resource_type == "researh":
+		main_scene.set_desired_research_workers(new_max)
 		
 func show_building_info_popup(cell: Vector2i, building_data: Dictionary):
 	var popup = $BuildingInfoPopup
