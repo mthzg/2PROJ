@@ -251,7 +251,11 @@ func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 		for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 			var neighbor = current + offset
 			if is_valid_tile(neighbor):
-				var tentative_g = g_score.get(current, INF) + 1
+				var movement_cost = 1.0
+				if is_on_road(neighbor):
+					movement_cost = 0.5  # Lower cost to prefer roads
+
+				var tentative_g = g_score.get(current, INF) + movement_cost
 				if tentative_g < g_score.get(neighbor, INF):
 					came_from[neighbor] = current
 					g_score[neighbor] = tentative_g
@@ -260,6 +264,7 @@ func find_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 						open_set.append(neighbor)
 
 	return []
+
 
 func is_valid_tile(cell: Vector2i) -> bool:
 	if is_over_water(cell):
